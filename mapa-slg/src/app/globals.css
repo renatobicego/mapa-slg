@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@plugin './hero.ts';
+@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+
+main {
+  @apply min-h-screen flex flex-col items-center justify-center px-4;
+}
