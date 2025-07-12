@@ -4,7 +4,8 @@ import {
   AdvancedMarkerAnchorPoint,
   useAdvancedMarkerRef,
 } from "@vis.gl/react-google-maps";
-import { CastleSvg } from "./castle-svg";
+import { AvatarData } from "@/types/types";
+import { Image } from "@heroui/react";
 
 type TreeMarkerProps = {
   position: google.maps.LatLngLiteral;
@@ -13,12 +14,14 @@ type TreeMarkerProps = {
     marker: google.maps.marker.AdvancedMarkerElement,
     featureId: string
   ) => void;
+  avatar: AvatarData;
 };
 
 export const FeatureMarker = ({
   position,
   featureId,
   onMarkerClick,
+  avatar,
 }: TreeMarkerProps) => {
   const [markerRef, marker] = useAdvancedMarkerRef();
   const handleClick = useCallback(
@@ -32,9 +35,14 @@ export const FeatureMarker = ({
       position={position}
       onClick={handleClick}
       anchorPoint={AdvancedMarkerAnchorPoint.CENTER}
-      className={"marker feature"}
     >
-      <CastleSvg />
+      <Image
+        key={avatar.id}
+        src={avatar.src}
+        alt={avatar.alt || `Avatar ${avatar.id}`}
+        className="rounded-full  object-cover h-12 w-12 border-2 border-white p-0.5 hover:scale-105 transition-all duration-200"
+        removeWrapper
+      />
     </AdvancedMarker>
   );
 };

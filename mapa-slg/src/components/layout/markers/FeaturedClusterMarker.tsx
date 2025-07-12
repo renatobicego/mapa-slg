@@ -6,13 +6,8 @@ import {
   AdvancedMarkerAnchorPoint,
   useAdvancedMarkerRef,
 } from "@vis.gl/react-google-maps";
-import { Avatar, AvatarGroup } from "@heroui/react";
-
-type AvatarData = {
-  id: string;
-  src: string;
-  alt?: string;
-};
+import { Image } from "@heroui/react";
+import { AvatarData } from "@/types/types";
 
 type TreeClusterMarkerProps = {
   clusterId: number;
@@ -77,23 +72,26 @@ export const FeaturesClusterMarker = React.memo(
         position={position}
         zIndex={size}
         onClick={handleClick}
-        style={{ width: markerSize, height: markerSize }}
+        style={{ width: markerSize, height: markerSize, overflow: "visible" }}
         anchorPoint={AdvancedMarkerAnchorPoint.CENTER}
       >
-        <AvatarGroup
-          isBordered
-          max={maxAvatarsToShow}
-          renderCount={renderCount}
-          total={size}
-        >
-          {displayAvatars.map((avatar) => (
-            <Avatar
+        <div className="flex relative items-center justify-center overflow-visible">
+          {displayAvatars.map((avatar, index) => (
+            <Image
               key={avatar.id}
               src={avatar.src}
               alt={avatar.alt || `Avatar ${avatar.id}`}
+              className="rounded-full  object-cover absolute border-2 border-white p-0.5 hover:scale-105 transition-all duration-200"
+              style={{
+                left: `${(index * markerSize) / 3}px`,
+                width: `${markerSize / 1.2}px`,
+                height: `${markerSize / 1.2}px`,
+              }}
+              removeWrapper
             />
           ))}
-        </AvatarGroup>
+          {renderCount()}
+        </div>
       </AdvancedMarker>
     );
   }

@@ -12,8 +12,6 @@ const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
 
 const PeopleMap = () => {
   const [geojson, setGeojson] = useState<CastlesGeojson | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [numClusters, setNumClusters] = useState(0);
 
   useEffect(() => {
     void loadCastlesGeojson().then((data: CastlesGeojson) => setGeojson(data));
@@ -30,11 +28,16 @@ const PeopleMap = () => {
   );
 
   return (
-    <APIProvider apiKey={API_KEY} version={"beta"} libraries={["marker"]}>
+    <APIProvider
+      apiKey={API_KEY}
+      version={"beta"}
+      libraries={["marker", "places"]}
+    >
       <Map
         mapId={"a"}
         defaultCenter={{ lat: 20, lng: 20 }}
         defaultZoom={3}
+        minZoom={3}
         gestureHandling={"greedy"}
         disableDefaultUI
         onClick={() => setInfowindowData(null)}
@@ -43,7 +46,6 @@ const PeopleMap = () => {
         {geojson && (
           <ClusteredMarkers
             geojson={geojson}
-            setNumClusters={setNumClusters}
             setInfowindowData={setInfowindowData}
           />
         )}

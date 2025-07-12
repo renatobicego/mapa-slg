@@ -19,6 +19,7 @@
     "next-auth": "^4.24.11",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-google-autocomplete": "^2.7.5",
     "react-hook-form": "^7.59.0",
     "supercluster": "^8.0.1"
   },

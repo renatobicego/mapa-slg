@@ -10,7 +10,22 @@ export interface IUserRegistration {
   isCurrentlyWorking?: boolean;
 }
 
+export interface IUserMapRegistration {
+  location: {
+    lat: number;
+    lng: number;
+  };
+  description?: string;
+  profileImage: FileList | null;
+}
+
 export interface IUserLogin {
   email: string;
   password: string;
 }
+
+export type AvatarData = {
+  id: string;
+  src: string;
+  alt?: string;
+};
