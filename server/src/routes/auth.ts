@@ -23,6 +23,7 @@ import { Document } from "mongoose";
 import multer from "multer";
 import path from "path";
 import { uploadFileAndGetUrl } from "../lib/firebase/uploadFIle.js";
+import { deleteFile } from "../lib/firebase/deleteFile.js";
 
 const router = express.Router();
 
@@ -239,6 +240,10 @@ router.put(
           req.file.mimetype
         );
 
+        if (user.profileImage) {
+          // Delete previous image if it exists
+          await deleteFile(user.profileImage);
+        }
         updates.profileImage = imageUrl; // Add image URL to updates
       }
 
