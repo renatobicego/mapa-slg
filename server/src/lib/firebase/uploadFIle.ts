@@ -22,7 +22,7 @@ export async function uploadFileAndGetUrl(
     stream.on("finish", async () => {
       // Option 1: Make public and return public URL
       await file.makePublic();
-      const publicUrl = `${bucket.name}/${file.name}`;
+      const publicUrl = `${file.name}`;
       resolve(publicUrl);
     });
 

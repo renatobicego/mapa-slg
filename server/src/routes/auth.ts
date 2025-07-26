@@ -24,6 +24,7 @@ import multer from "multer";
 import path from "path";
 import { uploadFileAndGetUrl } from "../lib/firebase/uploadFIle.js";
 import { deleteFile } from "../lib/firebase/deleteFile.js";
+import sharp from "sharp";
 
 const router = express.Router();
 
@@ -234,8 +235,13 @@ router.put(
         const filename = `imagenes-perfil/${
           user.name
         }-${Date.now()}${extension}`;
+        const compressedBuffer = await sharp(req.file.buffer)
+          .resize(800, 800, { fit: "inside" })
+          .jpeg({ quality: 70 })
+          .withMetadata()
+          .toBuffer();
         const imageUrl = await uploadFileAndGetUrl(
-          req.file.buffer,
+          compressedBuffer,
           filename,
           req.file.mimetype
         );
