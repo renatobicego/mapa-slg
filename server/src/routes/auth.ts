@@ -20,6 +20,9 @@ import {
   AuthRequest,
 } from "../middleware/auth.js";
 import { Document } from "mongoose";
+import multer from "multer";
+import path from "path";
+import { uploadFileAndGetUrl } from "../lib/firebase/uploadFIle.js";
 
 const router = express.Router();
 
@@ -208,45 +211,75 @@ router.get("/profile", authenticateToken, async (req: AuthRequest, res) => {
   }
 });
 
-// Update user profile
-router.put("/profile", authenticateToken, async (req: AuthRequest, res) => {
-  try {
-    const updates = req.body;
-    const user = req.user!;
+const upload = multer({ storage: multer.memoryStorage() });
 
-    // Remove sensitive fields that shouldn't be updated via this endpoint
-    delete updates.password;
-    delete updates.email;
-    delete updates._id;
+router.put(
+  "/profile",
+  authenticateToken,
+  upload.single("profileImage"),
+  async (req: AuthRequest, res) => {
+    try {
+      const updates = req.body;
+      const user = req.user!;
 
-    // Update user fields
-    Object.assign(user, updates);
-    await user.save();
+      // Remove sensitive fields
+      delete updates.password;
+      delete updates.email;
+      delete updates._id;
 
-    res.json({
-      success: true,
-      message: "Perfil actualizado exitosamente",
-      user: user.toJSON(),
-    });
-  } catch (error: any) {
-    console.error("Error al actualizar perfil:", error);
+      // Handle profile image upload (optional)
+      if (req.file) {
+        const extension = path.extname(req.file.originalname);
+        const filename = `imagenes-perfil/${
+          user.name
+        }-${Date.now()}${extension}`;
+        const imageUrl = await uploadFileAndGetUrl(
+          req.file.buffer,
+          filename,
+          req.file.mimetype
+        );
 
-    if (error.name === "ValidationError") {
-      return res.status(400).json({
+        updates.profileImage = imageUrl; // Add image URL to updates
+      }
+
+      const location = {
+        coordinates: [
+          parseFloat(updates["location.lng"]),
+          parseFloat(updates["location.lat"]),
+        ],
+        type: "Point",
+      };
+
+      // Update fields
+      Object.assign(user, { ...updates, location });
+      await user.save();
+
+      res.json({
+        success: true,
+        message: "Perfil actualizado exitosamente",
+        user: user.toJSON(),
+      });
+    } catch (error: any) {
+      console.error("Error al actualizar perfil:", error);
+
+      if (error.name === "ValidationError") {
+        return res.status(400).json({
+          success: false,
+          message: "Error de validación",
+          errors: Object.values(error.errors).map((err: any) => ({
+            field: err.path,
+            message: err.message,
+          })),
+        });
+      }
+
+      res.status(500).json({
         success: false,
-        message: "Error de validación",
-        errors: Object.values(error.errors).map((err: any) => ({
-          field: err.path,
-          message: err.message,
-        })),
+        message:
+          "Error interno del servidor durante la actualización del perfil",
       });
     }
-
-    res.status(500).json({
-      success: false,
-      message: "Error interno del servidor durante la actualización del perfil",
-    });
   }
-});
+);
 
 export default router;

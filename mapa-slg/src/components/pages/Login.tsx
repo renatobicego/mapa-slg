@@ -31,7 +31,6 @@ const LoginForm = () => {
         password: data.password,
         redirect: false,
       });
-      console.log(result);
       if (result?.error) {
         setError("Error al iniciar sesión. Verifica tus credenciales.");
       } else {

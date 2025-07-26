@@ -2,6 +2,15 @@
 @plugin './hero.ts';
 @source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
 
+@theme {
+  --color-light-blue: #2dafe6;
+  --color-dark-blue: rgb(41, 55, 134);
+  --color-red: #e40521;
+  --color-green: #00a767;
+  --color-yellow: #fbba00;
+  --color-black: #1d1d1b;
+}
+
 main {
   @apply min-h-screen flex flex-col items-center justify-center px-4;
 }

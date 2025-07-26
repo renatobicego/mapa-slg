@@ -66,6 +66,11 @@ export const FeaturesClusterMarker = React.memo(
       [sizeAsText]
     );
 
+    const indexBorderColor = useCallback((index: number) => {
+      const colors = ["border-light-blue", "border-red", "border-yellow"];
+      return colors[index];
+    }, []);
+
     return (
       <AdvancedMarker
         ref={markerRef}
@@ -81,9 +86,11 @@ export const FeaturesClusterMarker = React.memo(
               key={avatar.id}
               src={avatar.src}
               alt={avatar.alt || `Avatar ${avatar.id}`}
-              className="rounded-full  object-cover absolute border-2 border-white p-0.5 hover:scale-105 transition-all duration-200"
+              className={`rounded-full  object-cover absolute border-2 ${indexBorderColor(
+                index
+              )} p-0.5 hover:scale-105 transition-all duration-200`}
               style={{
-                left: `${(index * markerSize) / 3}px`,
+                left: `${(index * markerSize) / 2}px`,
                 width: `${markerSize / 1.2}px`,
                 height: `${markerSize / 1.2}px`,
               }}

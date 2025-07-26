@@ -11,25 +11,66 @@ import {
   ModalFooter,
   Textarea,
   Form,
+  addToast,
 } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import AddMeMap from "./AddMeMap";
 import ImageDropzone from "../common/ImageDropzone";
+import { useState } from "react";
+import { addMeMapService } from "@/api/auth";
 
 const AddMeMapModal = () => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const {
     setValue,
     getValues,
     formState: { errors },
     register,
     control,
+    handleSubmit,
+    reset,
   } = useForm<IUserMapRegistration>();
+  const [loading, setLoading] = useState(false);
 
   const handleLocationChange = (lat: number, lng: number) => {
     setValue("location.lat", lat);
     setValue("location.lng", lng);
     return { lat, lng };
+  };
+
+  const onSubmit = async (data: IUserMapRegistration) => {
+    try {
+      setLoading(true);
+      const formData = new FormData();
+
+      // Image from ImageDropzone (stored as File)
+      if (data.profileImage?.[0])
+        formData.append("profileImage", data.profileImage[0]);
+
+      formData.append("description", data.description || "");
+      formData.append("location.lat", String(data.location.lat));
+      formData.append("location.lng", String(data.location.lng));
+
+      await addMeMapService(formData);
+
+      addToast({
+        title: "Te has registrado en el mapa",
+        description: "Ahora podrás ver tu ubicación en el mapa del san chulo.",
+        color: "success",
+      });
+      reset();
+      onClose();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      addToast({
+        title: "Error al registrarte en el mapa",
+        description:
+          error.message + " Por favor, intenta nuevamente más tarde.",
+        color: "danger",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <>
@@ -50,6 +91,7 @@ const AddMeMapModal = () => {
                 <Form
                   id="add-me-map-form"
                   className="flex lg:flex-row flex-col gap-4 items-stretch"
+                  onSubmit={handleSubmit(onSubmit)}
                 >
                   <div className="flex flex-col gap-4 flex-1 ">
                     <ImageDropzone
@@ -83,7 +125,13 @@ const AddMeMapModal = () => {
                 <Button color="danger" variant="light" onPress={onClose}>
                   Cerrar
                 </Button>
-                <Button color="primary" type="submit" form="add-me-map-form">
+                <Button
+                  color="primary"
+                  type="submit"
+                  isLoading={loading}
+                  isDisabled={loading}
+                  form="add-me-map-form"
+                >
                   Guardar
                 </Button>
               </ModalFooter>

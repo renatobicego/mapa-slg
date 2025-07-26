@@ -76,6 +76,7 @@ const AddMeMap = ({ lat, lng, handleLocationChange }: AddMeMapProps) => {
       map: map,
       gmpDraggable: false,
     });
+    handleLocationChange(markerPosition.lat, markerPosition.lng);
     setMarker(newMarker);
   };
   // Create or update marker

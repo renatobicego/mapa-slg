@@ -61,6 +61,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.backendToken = user.token; // Store backend token in JWT
       }
       return token;
     },
@@ -68,14 +69,22 @@ export const authOptions: NextAuthOptions = {
       if (token) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+        session.backendToken = token.backendToken as string;
       }
       return session;
+    },
+    signIn: async ({ user, account }) => {
+      if (user && account && account.provider === "credentials") {
+        account.access_token = user.token as string;
+      }
+      return true;
     },
   },
 
   pages: {
     signIn: "/autenticacion/iniciar-sesion",
     newUser: "/autenticacion/registrarse",
+    signOut: "/autenticacion/cerrar-sesion",
   },
 
   session: {

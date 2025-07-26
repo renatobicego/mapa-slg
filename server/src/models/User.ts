@@ -15,6 +15,10 @@ const UserSchema = new Schema<IUserDocument>(
       minlength: [2, "El nombre debe tener al menos 2 caracteres"],
       maxlength: [50, "El nombre no puede exceder 50 caracteres"],
     },
+    description: {
+      type: String,
+      trim: true,
+    },
     email: {
       type: String,
       required: [true, "El email es obligatorio"],
