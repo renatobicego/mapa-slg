@@ -1,46 +1,33 @@
 import express from "express";
 import { User } from "../models/User.js";
 import { AuthRequest } from "../middleware/auth.js";
-import { SortOrder } from "mongoose";
+import { getFileUrl } from "../lib/firebase/getFileUrl.js";
 
 const router = express.Router();
 
 // Get all users
-router.get("/", async (req: AuthRequest, res) => {
+router.get("/", async (_req: AuthRequest, res) => {
   try {
-    const { role, page = 1, limit = 10 } = req.query;
+    // remove password, email and phone from the response
+    // and return only the necessary user information
+    const users = await User.find().select("-password -email -phone");
 
-    const query: any = {};
-    if (role && ["student", "teacher", "employee"].includes(role as string)) {
-      query.role = role;
-    }
+    const total = await User.countDocuments();
 
-    const options = {
-      page: parseInt(page as string),
-      limit: parseInt(limit as string),
-      sort: { createdAt: -1 as SortOrder },
-    };
-
-    const users = await User.find(query)
-      .select("-password")
-      .sort(options.sort)
-      .limit(options.limit * 1)
-      .skip((options.page - 1) * options.limit);
-
-    const total = await User.countDocuments(query);
+    const usersWithProfileUrlImage = users.map((user) => {
+      const userObject = user.toObject();
+      return {
+        ...userObject,
+        profileImage: getFileUrl(userObject.profileImage),
+      };
+    });
 
     res.json({
       success: true,
       message: "Usuarios obtenidos exitosamente",
       data: {
-        users,
-        pagination: {
-          currentPage: options.page,
-          totalPages: Math.ceil(total / options.limit),
-          totalUsers: total,
-          hasNext: options.page < Math.ceil(total / options.limit),
-          hasPrev: options.page > 1,
-        },
+        users: usersWithProfileUrlImage,
+        totalUsers: total,
       },
     });
   } catch (error) {

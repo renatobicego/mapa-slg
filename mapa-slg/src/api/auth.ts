@@ -1,3 +1,4 @@
+import { siteConfig } from "@/app/config";
 import { IUserRegistration } from "@/types/types";
 import axios, { AxiosError } from "axios";
 import { getSession } from "next-auth/react";
@@ -5,7 +6,7 @@ import { getSession } from "next-auth/react";
 export const registerUserService = async (payload: IUserRegistration) => {
   try {
     const { data } = await axios.post(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`,
+      `${siteConfig.serverUrl}/auth/register`,
       payload
     );
     return data;
@@ -20,12 +21,12 @@ export const addMeMapService = async (formData: FormData) => {
   try {
     // get token from next auth
     const token = await getSession().then((session) => session?.backendToken);
-    console.log(token);
+
     if (!token) {
       throw new Error("Error al obtener el token de sesión");
     }
     const { data } = await axios.put(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/profile`,
+      `${siteConfig.serverUrl}/auth/profile`,
       formData,
       {
         headers: {

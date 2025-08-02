@@ -1,30 +1,55 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 
-import { APIProvider, InfoWindow, Map } from "@vis.gl/react-google-maps";
+import { APIProvider, Map, MapEvent } from "@vis.gl/react-google-maps";
 
-import { Feature, Point } from "geojson";
+import { FeatureCollection, GeoJsonProperties, Point } from "geojson";
 import { InfoWindowContent } from "../layout/markers/InfoWindowContent";
-import { CastlesGeojson, loadCastlesGeojson } from "@/utils/castle";
 import { ClusteredMarkers } from "../layout/markers/ClusteredMarker";
+import { IUserProfile } from "@/types/types";
+import { getUsersService } from "@/api/users";
+import { mapUsersToGeojson } from "@/utils/users";
+import { useDisclosure } from "@heroui/react";
+// import { loadCastlesGeojson } from "@/utils/castle";
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
 
 const PeopleMap = () => {
-  const [geojson, setGeojson] = useState<CastlesGeojson | null>(null);
+  const [users, setUsers] = useState<FeatureCollection<
+    Point,
+    GeoJsonProperties
+  > | null>(null);
+  const mapRef = React.useRef<google.maps.Map | null>(null);
 
   useEffect(() => {
-    void loadCastlesGeojson().then((data: CastlesGeojson) => setGeojson(data));
+    void getUsersService().then(
+      (data: { users: IUserProfile[]; totalUsers: number }) =>
+        setUsers(mapUsersToGeojson(data.users))
+    );
+    // void loadCastlesGeojson().then((geojson) => {
+    //   setUsers(geojson);
+    // });
   }, []);
 
   const [infowindowData, setInfowindowData] = useState<{
-    anchor: google.maps.marker.AdvancedMarkerElement;
-    features: Feature<Point>[];
+    isLeaf: true;
+    data: IUserProfile;
   } | null>(null);
 
-  const handleInfoWindowClose = useCallback(
-    () => setInfowindowData(null),
-    [setInfowindowData]
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const increaseMapZoom = useCallback(
+    (center?: google.maps.LatLng | google.maps.LatLngLiteral | null) => {
+      if (mapRef.current) {
+        const currentZoom = mapRef.current.getZoom() || 3;
+        mapRef.current.setZoom(currentZoom + 2);
+        if (center) {
+          mapRef.current.setCenter(center);
+        }
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [mapRef.current]
   );
 
   return (
@@ -40,24 +65,28 @@ const PeopleMap = () => {
         minZoom={3}
         gestureHandling={"greedy"}
         disableDefaultUI
+        onIdle={(event: MapEvent) => {
+          if (!mapRef.current) {
+            mapRef.current = event.map;
+          }
+        }}
         onClick={() => setInfowindowData(null)}
         className={"custom-marker-clustering-map"}
       >
-        {geojson && (
+        {users && (
           <ClusteredMarkers
-            geojson={geojson}
+            geojson={users}
             setInfowindowData={setInfowindowData}
+            onOpen={onOpen}
+            increaseMapZoom={increaseMapZoom}
           />
         )}
 
-        {infowindowData && (
-          <InfoWindow
-            onCloseClick={handleInfoWindowClose}
-            anchor={infowindowData.anchor}
-          >
-            <InfoWindowContent features={infowindowData.features} />
-          </InfoWindow>
-        )}
+        <InfoWindowContent
+          data={infowindowData}
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+        />
       </Map>
     </APIProvider>
   );

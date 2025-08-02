@@ -38,7 +38,7 @@ export const FeatureMarker = ({
     >
       <Image
         key={avatar.id}
-        src={avatar.src}
+        src={`${avatar.src}`}
         alt={avatar.alt || `Avatar ${avatar.id}`}
         className="rounded-full  object-cover h-12 w-12 border-2 border-white p-0.5 hover:scale-105 transition-all duration-200"
         removeWrapper

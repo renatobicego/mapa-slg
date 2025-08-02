@@ -4,14 +4,19 @@ import { Feature, FeatureCollection, GeoJsonProperties, Point } from "geojson";
 import { FeatureMarker } from "./FeaturedMarker";
 import { FeaturesClusterMarker } from "./FeaturedClusterMarker";
 import { useSupercluster } from "@/hooks/useSupercluster";
+import { IUserProfile } from "@/types/types";
 
 type ClusteredMarkersProps = {
   geojson: FeatureCollection<Point>;
   setInfowindowData: (
     data: {
-      anchor: google.maps.marker.AdvancedMarkerElement;
-      features: Feature<Point>[];
+      isLeaf: true;
+      data: IUserProfile;
     } | null
+  ) => void;
+  onOpen: () => void;
+  increaseMapZoom: (
+    center?: google.maps.LatLng | google.maps.LatLngLiteral | null
   ) => void;
 };
 
@@ -27,19 +32,19 @@ const superclusterOptions: Supercluster.Options<
 export const ClusteredMarkers = ({
   geojson,
   setInfowindowData,
+  onOpen,
+  increaseMapZoom,
 }: ClusteredMarkersProps) => {
-  const { clusters, getLeaves, getClusterAvatars } = useSupercluster(
+  const { clusters, getClusterAvatars } = useSupercluster(
     geojson,
     superclusterOptions
   );
 
   const handleClusterClick = useCallback(
-    (marker: google.maps.marker.AdvancedMarkerElement, clusterId: number) => {
-      const leaves = getLeaves(clusterId);
-
-      setInfowindowData({ anchor: marker, features: leaves });
+    (marker: google.maps.marker.AdvancedMarkerElement) => {
+      increaseMapZoom(marker.position);
     },
-    [getLeaves, setInfowindowData]
+    [increaseMapZoom]
   );
 
   const handleMarkerClick = useCallback(
@@ -47,10 +52,12 @@ export const ClusteredMarkers = ({
       const feature = clusters.find(
         (feat) => feat.id === featureId
       ) as Feature<Point>;
+      const user = feature.properties as IUserProfile;
 
-      setInfowindowData({ anchor: marker, features: [feature] });
+      setInfowindowData({ isLeaf: true, data: user });
+      onOpen();
     },
-    [clusters, setInfowindowData]
+    [clusters, onOpen, setInfowindowData]
   );
 
   return (
@@ -69,7 +76,7 @@ export const ClusteredMarkers = ({
             avatars={getClusterAvatars(clusterProperties.cluster_id, 3).map(
               (leaf) => ({
                 id: leaf.id as string,
-                src: leaf.properties?.src as string,
+                src: leaf.properties?.profileImage as string,
               })
             )}
             size={clusterProperties.point_count}
@@ -83,7 +90,7 @@ export const ClusteredMarkers = ({
             position={{ lat, lng }}
             avatar={{
               id: leafProperties.id as string,
-              src: leafProperties.properties?.src as string,
+              src: leafProperties.properties?.profileImage as string,
             }}
             onMarkerClick={handleMarkerClick}
           />
