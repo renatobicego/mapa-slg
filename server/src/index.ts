@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { connectDatabase } from "./config/database.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
+import functions from "firebase-functions";
 
 // Load environment variables
 dotenv.config();
@@ -92,4 +93,4 @@ app.listen(PORT, () => {
   console.log(`🏥 Verificación de salud: http://localhost:${PORT}/health`);
 });
 
-export default app;
+export default functions.https.onRequest(app);
