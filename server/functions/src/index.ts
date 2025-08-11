@@ -24,6 +24,7 @@ app.use(
     origin: process.env.CORS_ORIGINS?.split(",") || [
       "http://localhost:3000",
       "http://localhost:5173",
+      "https://mapaslg100.vercel.app",
     ],
     credentials: true,
   })
