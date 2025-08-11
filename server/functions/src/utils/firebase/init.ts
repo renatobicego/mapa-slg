@@ -1,9 +1,9 @@
 // firebase.js
 import "dotenv/config";
 import admin from "firebase-admin";
-// import serviceAccount from "../../../slg100-service-account.json"; // Adjust the path as necessary
+import serviceAccount from "../../../slg100-service-account.json"; // Adjust the path as necessary
 
-const serviceAccount = JSON.parse(process.env.FIREBAS_STORAGE_SA || "{}");
+// const serviceAccount = JSON.parse(process.env.FIREBAS_STORAGE_SA || "{}");
 
 if (!admin.apps.length) {
   admin.initializeApp({
