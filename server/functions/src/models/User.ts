@@ -56,12 +56,10 @@ const UserSchema = new Schema<IUserDocument>(
       },
     },
     location: {
-      default: undefined, // Allow empty location
       required: false, // Location is optional
       type: {
         type: String,
         enum: ["Point"],
-        default: "Point",
       },
       coordinates: {
         type: [Number],
