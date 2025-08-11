@@ -19,7 +19,7 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
           BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
-          FIREBASE_STORAGE_SA: ${{ secrets.FIREBASE_STORAGE_SA }}
+          FIREBAS_STORAGE_SA: ${{ secrets.FIREBAS_STORAGE_SA }}
         run: npm run build --prefix server/functions
 
       - name: Deploy functions only (using Firebase CLI)
