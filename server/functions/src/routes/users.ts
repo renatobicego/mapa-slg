@@ -1,7 +1,7 @@
 import express from "express";
 import { User } from "../models/User.js";
 import { AuthRequest } from "../middleware/auth.js";
-import { getFileUrl } from "../lib/firebase/getFileUrl.js";
+import { getFileUrl } from "../utils/firebase/getFileUrl.js";
 
 const router = express.Router();
 

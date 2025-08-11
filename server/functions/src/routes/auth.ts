@@ -22,8 +22,8 @@ import {
 import { Document } from "mongoose";
 import multer from "multer";
 import path from "path";
-import { uploadFileAndGetUrl } from "../lib/firebase/uploadFIle.js";
-import { deleteFile } from "../lib/firebase/deleteFile.js";
+import { uploadFileAndGetUrl } from "../utils/firebase/uploadFIle.js";
+import { deleteFile } from "../utils/firebase/deleteFile.js";
 import sharp from "sharp";
 
 const router = express.Router();
