@@ -7,14 +7,21 @@ on:
     branches:
       - main
 jobs:
-  build_and_deploy:
+  build_and_preview:
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm run build
+
+      - name: Install dependencies
+        run: npm install --prefix functions
+
+      - name: Build
+        run: npm run build --prefix functions
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SLG100_F40EB }}
-          channelId: live
           projectId: slg100-f40eb
+
