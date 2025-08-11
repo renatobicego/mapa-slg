@@ -35,8 +35,8 @@ export const authenticateToken = async (
     }
 
     req.user = user;
-    next();
-  } catch (error) {
+    return next();
+  } catch {
     return res.status(403).json({
       success: false,
       message: "Token inválido o expirado",
@@ -82,8 +82,8 @@ export const validateFrontendToken = async (
     }
 
     req.body.validatedUser = user;
-    next();
-  } catch (error) {
+    return next();
+  } catch {
     return res.status(400).json({
       success: false,
       message: "Token inválido o malformado",

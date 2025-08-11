@@ -51,14 +51,14 @@ router.get("/:id", async (req: AuthRequest, res) => {
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       message: "Usuario obtenido exitosamente",
       user,
     });
   } catch (error) {
     console.error("Error al obtener usuario:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Error interno del servidor",
     });

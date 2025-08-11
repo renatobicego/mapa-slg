@@ -3,16 +3,16 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
-import { connectDatabase } from "./config/database.js";
-import authRoutes from "./routes/auth.js";
-import userRoutes from "./routes/users.js";
-import functions from "firebase-functions";
+import * as functions from "firebase-functions";
+import { connectDatabase } from "./config/database";
+import authRoutes from "./routes/auth";
+import userRoutes from "./routes/users";
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+// const PORT = process.env.PORT || 3001;
 
 // Connect to database
 connectDatabase();
@@ -88,9 +88,10 @@ app.use("*", (_req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor ejecutándose en el puerto ${PORT}`);
-  console.log(`🏥 Verificación de salud: http://localhost:${PORT}/health`);
-});
+// app.listen(PORT, () => {
+//   console.log(`🚀 Servidor ejecutándose en el puerto ${PORT}`);
+//   console.log(`🏥 Verificación de salud: http://localhost:${PORT}/health`);
+// });
 
-export default functions.https.onRequest(app);
+export const api = functions.https.onRequest(app);
+// export default app;

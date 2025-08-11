@@ -83,7 +83,7 @@ router.post(
         user: user.toJSON(),
       };
 
-      res.status(201).json(response);
+      return res.status(201).json(response);
     } catch (error: any) {
       console.error("Error de registro:", error);
 
@@ -98,7 +98,7 @@ router.post(
         });
       }
 
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Error interno del servidor durante el registro",
       });
@@ -148,11 +148,13 @@ router.post(
       res.json(response);
     } catch (error) {
       console.error("Error de inicio de sesión:", error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Error interno del servidor durante el inicio de sesión",
       });
     }
+    // Ensure a return statement in all code paths
+    return;
   }
 );
 
@@ -265,7 +267,7 @@ router.put(
       Object.assign(user, { ...updates, location });
       await user.save();
 
-      res.json({
+      return res.json({
         success: true,
         message: "Perfil actualizado exitosamente",
         user: user.toJSON(),
@@ -284,7 +286,7 @@ router.put(
         });
       }
 
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message:
           "Error interno del servidor durante la actualización del perfil",
