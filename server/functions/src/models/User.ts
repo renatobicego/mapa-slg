@@ -56,7 +56,6 @@ const UserSchema = new Schema<IUserDocument>(
       },
     },
     location: {
-      required: false, // Location is optional
       type: {
         type: String,
         enum: ["Point"],
