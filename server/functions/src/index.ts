@@ -19,13 +19,21 @@ connectDatabase();
 
 // Security middleware
 app.use(helmet());
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "https://mapaslg100.vercel.app",
+];
+
 app.use(
   cors({
-    origin: process.env.CORS_ORIGINS?.split(",") || [
-      "http://localhost:3000",
-      "http://localhost:5173",
-      "https://mapaslg100.vercel.app",
-    ],
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true); // permitir solicitudes sin origen (ej: Postman)
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      callback(new Error("No permitido por CORS"));
+    },
     credentials: true,
   })
 );
