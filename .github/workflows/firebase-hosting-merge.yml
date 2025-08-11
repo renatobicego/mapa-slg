@@ -13,15 +13,6 @@ jobs:
       - name: Install dependencies (functions)
         run: npm install --prefix server/functions
 
-      - name: Build functions
-        env:
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
-          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
-          FIREBAS_STORAGE_SA: ${{ secrets.FIREBAS_STORAGE_SA }}
-        run: npm run build --prefix server/functions
-
       - name: Deploy functions only (using Firebase CLI)
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
