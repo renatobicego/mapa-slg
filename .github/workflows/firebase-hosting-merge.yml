@@ -13,15 +13,6 @@ jobs:
       - name: Install dependencies (functions)
         run: npm install --prefix server/functions
 
-      - name: Build functions
-        env:
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
-          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
-          FIREBAS_STORAGE_SA: ${{ secrets.FIREBAS_STORAGE_SA }}
-        run: npm run build --prefix server/functions
-
       - name: Deploy functions only (using Firebase CLI)
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
@@ -30,9 +21,13 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
           BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
-          FIREBAS_STORAGE_SA: ${{ secrets.FIREBAS_STORAGE_SA }}
         run: |
+          echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> server/functions/.env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> server/functions/.env
+          echo "CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}" >> server/functions/.env
+          echo "BUCKET_NAME=${{ secrets.BUCKET_NAME }}" >> server/functions/.env
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SLG100_F40EB }}' > $GOOGLE_APPLICATION_CREDENTIALS
+          echo '${{ secrets.FIREBAS_STORAGE_SA }}' > server/functions/slg100-service-account.json
           npm install -g firebase-tools
           firebase deploy --only functions --project $PROJECT_ID --config server/firebase.json
 
