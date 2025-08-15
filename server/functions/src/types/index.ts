@@ -5,7 +5,7 @@ export interface IUser {
   phone?: string;
   profileImage?: string;
   description?: string;
-  role: "student" | "teacher" | "employee";
+  role: "exstudent" | "teacher" | "employee";
   location?: {
     type: "Point";
     coordinates: [number, number]; // [longitude, latitude]
@@ -30,7 +30,7 @@ export interface IUserRegistration {
   phone?: string;
   description?: string;
   profileImage?: string;
-  role: "student" | "teacher" | "employee";
+  role: "exstudent" | "teacher" | "employee" | "student";
   graduationYear?: number;
   workStartYear?: number;
   workEndYear?: number;

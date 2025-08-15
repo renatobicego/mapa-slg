@@ -23,34 +23,24 @@ export const validateRegistration = [
     .matches(/^\+?[\d\s\-\(\)]+$/)
     .withMessage("Por favor proporciona un número de teléfono válido"),
 
-  body("role")
-    .isIn(["student", "teacher", "employee"])
-    .withMessage("El rol debe ser estudiante, profesor o empleado"),
-
   body("profileImage").optional(),
 
   // Student-specific validation
   body("graduationYear")
-    .if(body("role").equals("student"))
+    .if(body("role").equals("exstudent"))
     .isInt({ min: 1900, max: new Date().getFullYear() + 10 })
-    .withMessage(
-      "El año de graduación debe estar entre 1900 y 10 años en el futuro"
-    ),
+    .withMessage("Ingrese un año válido"),
 
   // Teacher/Employee-specific validation
   body("workStartYear")
     .if(body("role").isIn(["teacher", "employee"]))
     .isInt({ min: 1900, max: new Date().getFullYear() })
-    .withMessage(
-      "El año de inicio de trabajo debe estar entre 1900 y el año actual"
-    ),
+    .withMessage("Ingrese un año válido"),
 
   body("workEndYear")
     .optional()
     .isInt({ min: 1900, max: new Date().getFullYear() })
-    .withMessage(
-      "El año de fin de trabajo debe estar entre 1900 y el año actual"
-    ),
+    .withMessage("Ingrese un año válido"),
 
   body("isCurrentlyWorking")
     .optional()

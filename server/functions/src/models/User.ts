@@ -51,8 +51,8 @@ const UserSchema = new Schema<IUserDocument>(
       type: String,
       required: [true, "El rol es obligatorio"],
       enum: {
-        values: ["student", "teacher", "employee"],
-        message: "El rol debe ser estudiante, profesor o empleado",
+        values: ["exstudent", "teacher", "employee", "student"],
+        message: "El rol debe ser alumno, profesor o profesional no docente",
       },
     },
     location: {
@@ -84,13 +84,10 @@ const UserSchema = new Schema<IUserDocument>(
     graduationYear: {
       type: Number,
       required: function (this: IUserDocument) {
-        return this.role === "student";
+        return this.role === "exstudent";
       },
-      min: [1900, "El año de graduación debe ser posterior a 1900"],
-      max: [
-        new Date().getFullYear() + 20,
-        "El año de graduación no puede ser más de 20 años en el futuro",
-      ],
+      min: [1900, "Ingrese un año válido"],
+      max: [new Date().getFullYear(), "Ingrese un año válido"],
     },
 
     // Teacher/Employee-specific fields
@@ -99,11 +96,8 @@ const UserSchema = new Schema<IUserDocument>(
       required: function (this: IUserDocument) {
         return this.role === "teacher" || this.role === "employee";
       },
-      min: [1900, "El año de inicio de trabajo debe ser posterior a 1900"],
-      max: [
-        new Date().getFullYear(),
-        "El año de inicio de trabajo no puede ser en el futuro",
-      ],
+      min: [1900, "Ingrese un año válido"],
+      max: [new Date().getFullYear(), "Ingrese un año válido"],
     },
     workEndYear: {
       type: Number,
@@ -165,10 +159,10 @@ UserSchema.methods.comparePassword = async function (
 
 // Validation for role-specific fields
 UserSchema.pre("validate", function (next) {
-  if (this.role === "student" && !this.graduationYear) {
+  if (this.role === "exstudent" && !this.graduationYear) {
     this.invalidate(
       "graduationYear",
-      "El año de graduación es obligatorio para estudiantes"
+      "El año de egreso es obligatorio para ex-alumnos"
     );
   }
 
@@ -178,7 +172,7 @@ UserSchema.pre("validate", function (next) {
   ) {
     this.invalidate(
       "workStartYear",
-      "El año de inicio de trabajo es obligatorio para profesores y empleados"
+      "El año de inicio de trabajo es obligatorio para profesores y profesionales no docentes"
     );
   }
 

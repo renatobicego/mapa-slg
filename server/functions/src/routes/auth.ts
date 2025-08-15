@@ -52,14 +52,14 @@ router.post(
       // Create user object
       const userToCreate: any = {
         name: userData.name,
-        email: userData.email,
+        email: userData.email.trim(),
         password: userData.password,
         role: userData.role,
-        phone: userData.phone,
+        phone: userData.phone?.trim(),
       };
 
       // Add role-specific fields
-      if (userData.role === "student") {
+      if (userData.role === "exstudent") {
         userToCreate.graduationYear = userData.graduationYear;
       } else if (userData.role === "teacher" || userData.role === "employee") {
         userToCreate.workStartYear = userData.workStartYear;
