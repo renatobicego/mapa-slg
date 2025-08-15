@@ -50,7 +50,13 @@ const RegisterForm = () => {
     setError("");
 
     try {
-      const response = await registerUserService(data);
+      const response = await registerUserService({
+        ...data,
+        workEndYear:
+          data.workEndYear && !isNaN(data.workEndYear)
+            ? data.workEndYear
+            : undefined,
+      });
 
       if (!response.success) {
         const errorData = await response.json();
@@ -68,6 +74,7 @@ const RegisterForm = () => {
       if (err instanceof AxiosError) {
         err.response?.data.errors?.forEach(
           ({ path, msg }: { path: keyof IUserRegistration; msg: string }) => {
+            console.log(path, msg);
             setFormError(path as keyof IUserRegistration, {
               type: "manual",
               message: msg,
@@ -87,114 +94,83 @@ const RegisterForm = () => {
         <p className="text-center">Ingresá tu información para registrarte</p>
       </CardHeader>
       <CardBody>
-        <Form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <Form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {error && <Alert color="danger">{error}</Alert>}
 
           {/* Basic Information */}
-          <div className="flex flex-col items-start gap-4 w-full">
-            <h3 className="text-lg font-medium">Datos Personales</h3>
+          <h3 className="text-lg font-medium">Datos Personales</h3>
+          <div className="flex flex-col items-start gap-0 w-full">
+            <Input
+              id="name"
+              {...register("name", {
+                required: "El nombre es requerido",
+              })}
+              isRequired
+              showGrouped
+              position="top"
+              errorMessage={errors.name?.message}
+              placeholder="Ingresá tu nombre completo"
+              label="Nombre Completo"
+            />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-              <Input
-                id="name"
-                {...register("name", {
-                  required: "El nombre es requerido",
-                })}
-                errorMessage={errors.name?.message}
-                placeholder="Ingresá tu nombre completo"
-                label="Nombre Completo"
-              />
+            <Input
+              id="email"
+              type="email"
+              {...register("email", {
+                required: "Email es requerido",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Email incorrecto",
+                },
+              })}
+              isRequired
+              showGrouped
+              position="center"
+              placeholder="Ingresá tu email"
+              label="Email"
+              errorMessage={errors.email?.message}
+            />
 
-              <Input
-                id="email"
-                type="email"
-                {...register("email", {
-                  required: "Email es requerido",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Email incorrecto",
-                  },
-                })}
-                placeholder="Ingresá tu email"
-                label="Email"
-                description="Luego iniciarás sesión con tu email"
-                errorMessage={errors.email?.message}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                {...register("password", {
-                  required: "Contraseña es requerida",
-                  minLength: {
-                    value: 8,
-                    message: "La contraseña debe tener al menos 8 caracteres",
-                  },
-                })}
-                placeholder="Ingresa tu contraeña"
-                description="La contraseña debe tener al menos 8 caracteres"
-                endContent={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    isIconOnly
-                    onPress={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                }
-                errorMessage={errors.password?.message}
-                label="Contraseña"
-              />
-
-              <Input
-                id="phone"
-                {...register("phone")}
-                placeholder="Ingresá tu telefono"
-                label="Telefono"
-              />
-            </div>
-
-            {/* <Textarea
-                id="description"
-                {...register("description")}
-                placeholder="Cuentanos sobre ti"
-                label="Descripción"
-                className="min-h-[100px]"
-                labelPlacement="outside"
-              /> */}
-
-            {/* <div className="flex flex-col gap-2 items-start">
-                <label htmlFor="profileImage" className="text-sm">
-                  Foto de Perfil
-                </label>
-                <div className="flex items-center gap-4">
-                  <Input
-                    id="profileImage"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                  <Button
-                    type="button"
-                    variant="bordered"
-                    onPress={() =>
-                      document.getElementById("profileImage")?.click()
-                    }
-                  >
-                    <Upload className="h-4 w-4 mr-2" />
-                    Comparte tu foto
-                  </Button>
-                </div>
-              </div>*/}
+            <Input
+              id="phone"
+              {...register("phone")}
+              showGrouped
+              position="center"
+              placeholder="Ingresá tu telefono"
+              label="Telefono"
+            />
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              {...register("password", {
+                required: "Contraseña es requerida",
+                minLength: {
+                  value: 8,
+                  message: "La contraseña debe tener al menos 8 caracteres",
+                },
+              })}
+              isRequired
+              showGrouped
+              position="bottom"
+              placeholder="Ingresa tu contraeña"
+              endContent={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+              }
+              errorMessage={errors.password?.message}
+              label="Contraseña"
+            />
           </div>
 
           {/* Role Selection */}
@@ -219,6 +195,7 @@ const RegisterForm = () => {
                   isInvalid={errors.role ? true : false}
                 >
                   <SelectItem key="student">Alumno</SelectItem>
+                  <SelectItem key="exstudent">Ex-Alumno</SelectItem>
                   <SelectItem key="teacher">Profesor</SelectItem>
                   <SelectItem key="employee">Personal no docente</SelectItem>
                 </Select>
@@ -226,36 +203,32 @@ const RegisterForm = () => {
             />
 
             {/* Conditional Fields Based on Role */}
-            {selectedRole === "student" && (
+            {selectedRole === "exstudent" && (
               <Input
                 id="graduationYear"
                 type="number"
                 {...register("graduationYear", {
                   validate: (value) => {
                     if (!selectedRole) return true;
-                    return selectedRole === "student" && !value
-                      ? "El año de graduación es obligatorio para estudiantes"
+                    return selectedRole === "exstudent" && !value
+                      ? "El año de egreso es obligatorio para ex-alumnos"
                       : true;
                   },
+                  valueAsNumber: true,
                   min: {
                     value: 1900,
-                    message: "Ingresá un año válido",
+                    message: "Ingrese un año válido",
                   },
                   max: {
-                    value: new Date().getFullYear() + 20,
-                    message: "Ingresá un año válido",
-                  },
-                  pattern: {
-                    value: /^[0-9]{4}$/,
-                    message: "Debe ser un año válido de 4 dígitos",
+                    value: new Date().getFullYear(),
+                    message: "Ingrese un año válido",
                   },
                 })}
                 placeholder="por ejemplo, 2025"
                 label="Año de egreso"
                 pattern="^[0-9]{4}$"
                 min={1900}
-                max={new Date().getFullYear() + 20}
-                description="Si todavía no te has egresado, ingresa el año en el que lo harías"
+                max={new Date().getFullYear()}
                 errorMessage={errors.graduationYear?.message}
               />
             )}
@@ -277,24 +250,23 @@ const RegisterForm = () => {
                   )}
                 />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                <div className="grid grid-cols-1 gap-0 w-full">
                   <Input
                     id="workStartYear"
                     type="number"
                     {...register("workStartYear", {
                       min: {
                         value: 1900,
-                        message: "Debe ser posterior a 1900",
+                        message: "Ingrese un año válido",
                       },
                       max: {
                         value: new Date().getFullYear(),
-                        message: "No puede ser un año futuro",
+                        message: "Ingrese un año válido",
                       },
-                      pattern: {
-                        value: /^[0-9]{4}$/,
-                        message: "Debe ser un año válido de 4 dígitos",
-                      },
+                      valueAsNumber: true,
                     })}
+                    showGrouped={!isCurrentlyWorking ? true : undefined}
+                    position="top"
                     placeholder="por ejemplo, 2025"
                     label="¿Desde qué año?"
                     pattern="^[0-9]{4}$"
@@ -313,21 +285,21 @@ const RegisterForm = () => {
                             "Debe ser mayor o igual al año de inicio"
                           );
                         },
+
+                        valueAsNumber: true,
                         min: {
                           value: 1900,
-                          message: "Debe ser posterior a 1900",
+                          message: "Ingrese un año válido",
                         },
                         max: {
                           value: new Date().getFullYear(),
-                          message: "No puede ser un año futuro",
-                        },
-                        pattern: {
-                          value: /^[0-9]{4}$/,
-                          message: "Debe ser un año válido de 4 dígitos",
+                          message: "Ingrese un año válido",
                         },
                       })}
                       placeholder="por ejemplo, 2025"
                       label="Hasta qué año?"
+                      showGrouped
+                      position="bottom"
                       pattern="^[0-9]{4}$"
                       errorMessage={errors.workEndYear?.message}
                     />
@@ -343,7 +315,7 @@ const RegisterForm = () => {
             color="primary"
             disabled={isLoading}
           >
-            {isLoading ? "Crendo..." : "Crear Perfil"}
+            {isLoading ? "Creando..." : "Crear Perfil"}
           </Button>
 
           <p className="text-sm text-gray-600">

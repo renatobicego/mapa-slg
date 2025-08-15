@@ -3,7 +3,7 @@ export interface IUserRegistration {
   email: string;
   password: string;
   phone?: string;
-  role: "student" | "teacher" | "employee";
+  role: "exstudent" | "teacher" | "employee" | "student";
   graduationYear?: number;
   workStartYear?: number;
   workEndYear?: number;
@@ -24,8 +24,11 @@ export type IUserProfile =
       };
     } & (
       | {
-          role: "student";
+          role: "exstudent";
           graduationYear: number;
+        }
+      | {
+          role: "student";
         }
       | {
           role: "teacher" | "employee";

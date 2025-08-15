@@ -14,6 +14,7 @@ export const getUsersService = async (): Promise<{
     });
     return data.data;
   } catch (error) {
+    console.log(error);
     throw error;
   }
 };

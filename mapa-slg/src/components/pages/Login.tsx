@@ -53,54 +53,58 @@ const LoginForm = () => {
         <Form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {error && <Alert color="danger">{error}</Alert>}
 
-          <Input
-            id="email"
-            type="email"
-            {...register("email", {
-              required: "Email es requerido",
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: "Email incorrecto",
-              },
-            })}
-            isRequired
-            placeholder="Ingresá tu email"
-            label="Email"
-            description="Luego iniciarás sesión con tu email"
-            errorMessage={errors.email?.message}
-          />
+          <div className="w-full flex flex-col gap-0">
+            <Input
+              id="email"
+              type="email"
+              {...register("email", {
+                required: "Email es requerido",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Email incorrecto",
+                },
+              })}
+              showGrouped
+              position="top"
+              isRequired
+              placeholder="Ingresá tu email"
+              label="Email"
+              errorMessage={errors.email?.message}
+            />
 
-          <Input
-            id="password"
-            type={showPassword ? "text" : "password"}
-            {...register("password", {
-              required: "Contraseña es requerida",
-              minLength: {
-                value: 8,
-                message: "La contraseña debe tener al menos 8 caracteres",
-              },
-            })}
-            isRequired
-            placeholder="Ingresa tu contraeña"
-            description="La contraseña debe tener al menos 8 caracteres"
-            endContent={
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                isIconOnly
-                onPress={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </Button>
-            }
-            errorMessage={errors.password?.message}
-            label="Contraseña"
-          />
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              {...register("password", {
+                required: "Contraseña es requerida",
+                minLength: {
+                  value: 8,
+                  message: "La contraseña debe tener al menos 8 caracteres",
+                },
+              })}
+              isRequired
+              showGrouped
+              position="bottom"
+              placeholder="Ingresa tu contraeña"
+              endContent={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+              }
+              errorMessage={errors.password?.message}
+              label="Contraseña"
+            />
+          </div>
           <Button
             type="submit"
             className="w-full"
