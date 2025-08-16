@@ -14,17 +14,14 @@ import {
   validateToken,
   handleValidationErrors,
 } from "../middleware/validation.js";
-import {
-  authenticateToken,
-  validateFrontendToken,
-  AuthRequest,
-} from "../middleware/auth.js";
+import { validateFrontendToken } from "../middleware/auth.js";
 import { Document } from "mongoose";
 import multer from "multer";
 import path from "path";
 import { uploadFileAndGetUrl } from "../utils/firebase/uploadFIle.js";
 import { deleteFile } from "../utils/firebase/deleteFile.js";
 import sharp from "sharp";
+import { clerkClient, getAuth, requireAuth } from "@clerk/express";
 
 const router = express.Router();
 
@@ -198,13 +195,27 @@ router.post(
 );
 
 // Get current user profile
-router.get("/profile", authenticateToken, async (req: AuthRequest, res) => {
+router.get("/profile", requireAuth(), async (req, res) => {
   try {
-    res.json({
-      success: true,
-      message: "Perfil obtenido exitosamente",
-      user: req.user!.toJSON(),
+    const { userId } = getAuth(req);
+    const user = await clerkClient.users.getUser(userId);
+
+    const userProfile = await User.findOne({
+      email: user.emailAddresses[0].emailAddress,
     });
+
+    if (!userProfile) {
+      res.status(404).json({
+        success: false,
+        message: "Perfil no encontrado",
+      });
+    } else {
+      res.json({
+        success: true,
+        message: "Perfil obtenido exitosamente",
+        user: userProfile.toJSON(),
+      });
+    }
   } catch (error) {
     console.error("Error al obtener perfil:", error);
     res.status(500).json({
@@ -218,12 +229,24 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 router.put(
   "/profile",
-  authenticateToken,
+  requireAuth(),
   upload.single("profileImage"),
-  async (req: AuthRequest, res) => {
+  async (req, res) => {
     try {
       const updates = req.body;
-      const user = req.user!;
+      const { userId } = getAuth(req);
+      const user = await clerkClient.users.getUser(userId);
+
+      const userProfile = await User.findOne({
+        email: user.emailAddresses[0].emailAddress,
+      });
+
+      if (!userProfile) {
+        return res.status(404).json({
+          success: false,
+          message: "Perfil no encontrado",
+        });
+      }
 
       // Remove sensitive fields
       delete updates.password;
@@ -234,7 +257,7 @@ router.put(
       if (req.file) {
         const extension = path.extname(req.file.originalname);
         const filename = `imagenes-perfil/${
-          user.name
+          userProfile.name
         }-${Date.now()}${extension}`;
         const compressedBuffer = await sharp(req.file.buffer)
           .resize(800, 800, { fit: "inside" })
@@ -247,9 +270,9 @@ router.put(
           req.file.mimetype
         );
 
-        if (user.profileImage) {
+        if (userProfile.profileImage) {
           // Delete previous image if it exists
-          await deleteFile(user.profileImage);
+          await deleteFile(userProfile.profileImage);
         }
         updates.profileImage = imageUrl; // Add image URL to updates
       }
@@ -263,13 +286,13 @@ router.put(
       };
 
       // Update fields
-      Object.assign(user, { ...updates, location });
-      await user.save();
+      Object.assign(userProfile, { ...updates, location });
+      await userProfile.save();
 
       return res.json({
         success: true,
         message: "Perfil actualizado exitosamente",
-        user: user.toJSON(),
+        user: userProfile.toJSON(),
       });
     } catch (error: any) {
       console.error("Error al actualizar perfil:", error);

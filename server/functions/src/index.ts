@@ -7,6 +7,7 @@ import * as functions from "firebase-functions";
 import { connectDatabase } from "./config/database";
 import authRoutes from "./routes/auth";
 import userRoutes from "./routes/users";
+import { clerkMiddleware } from "@clerk/express";
 
 // Load environment variables
 dotenv.config();
@@ -19,6 +20,7 @@ connectDatabase();
 
 // Security middleware
 app.use(helmet());
+app.use(clerkMiddleware());
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
