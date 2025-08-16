@@ -15,16 +15,16 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Input from "../common/Input";
 import Button from "../common/Button";
-import { EyeOff, Eye } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { siteConfig } from "@/app/config";
 import { registerUserService } from "@/api/auth";
 import { AxiosError } from "axios";
+import { useUser } from "@clerk/nextjs";
 
 const RegisterForm = () => {
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const { user } = useUser();
   const router = useRouter();
 
   const {
@@ -52,6 +52,8 @@ const RegisterForm = () => {
     try {
       const response = await registerUserService({
         ...data,
+        email: user?.emailAddresses[0].emailAddress || data.email,
+        name: user?.fullName || data.name,
         workEndYear:
           data.workEndYear && !isNaN(data.workEndYear)
             ? data.workEndYear
@@ -64,6 +66,7 @@ const RegisterForm = () => {
       }
 
       // Redirect to login page or dashboard
+      await user?.reload();
       router.push(siteConfig.pages.login);
     } catch (err) {
       setError(
@@ -90,88 +93,29 @@ const RegisterForm = () => {
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader className="flex flex-col gap-2 items-start">
-        <h1 className="text-2xl font-bold text-center">Crear Perfil</h1>
-        <p className="text-center">Ingresá tu información para registrarte</p>
+        <h1 className="text-2xl font-bold text-center">Bienvenido/a</h1>
+        <p className="text-center">Últimos pasos para completar su registro</p>
       </CardHeader>
       <CardBody>
         <Form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {error && <Alert color="danger">{error}</Alert>}
 
-          {/* Basic Information */}
-          <h3 className="text-lg font-medium">Datos Personales</h3>
-          <div className="flex flex-col items-start gap-0 w-full">
-            <Input
-              id="name"
-              {...register("name", {
-                required: "El nombre es requerido",
-              })}
-              isRequired
-              showGrouped
-              position="top"
-              errorMessage={errors.name?.message}
-              placeholder="Ingresá tu nombre completo"
-              label="Nombre Completo"
-            />
-
-            <Input
-              id="email"
-              type="email"
-              {...register("email", {
-                required: "Email es requerido",
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: "Email incorrecto",
-                },
-              })}
-              isRequired
-              showGrouped
-              position="center"
-              placeholder="Ingresá tu email"
-              label="Email"
-              errorMessage={errors.email?.message}
-            />
-
-            <Input
-              id="phone"
-              {...register("phone")}
-              showGrouped
-              position="center"
-              placeholder="Ingresá tu telefono"
-              label="Telefono"
-            />
-            <Input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              {...register("password", {
-                required: "Contraseña es requerida",
-                minLength: {
-                  value: 8,
-                  message: "La contraseña debe tener al menos 8 caracteres",
-                },
-              })}
-              isRequired
-              showGrouped
-              position="bottom"
-              placeholder="Ingresa tu contraeña"
-              endContent={
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  isIconOnly
-                  onPress={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </Button>
-              }
-              errorMessage={errors.password?.message}
-              label="Contraseña"
-            />
-          </div>
+          <Input
+            id="phone"
+            {...register("phone", {
+              pattern: {
+                value: /^\+?[0-9\s]+$/,
+                message: "Número de teléfono inválido",
+              },
+            })}
+            label="Teléfono"
+            placeholder="Teléfono"
+            type="tel"
+            description="Opcional, pero recomendado"
+            pattern="^\+?[0-9\s]+$"
+            errorMessage={errors.phone?.message}
+            isInvalid={errors.phone ? true : false}
+          />
 
           {/* Role Selection */}
           <div className="flex flex-col items-start gap-4 w-full">
