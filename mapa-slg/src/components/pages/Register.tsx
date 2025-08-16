@@ -20,6 +20,7 @@ import { siteConfig } from "@/app/config";
 import { registerUserService } from "@/api/auth";
 import { AxiosError } from "axios";
 import { useUser } from "@clerk/nextjs";
+import { completeOnboarding } from "@/app/bienvenida/_actions";
 
 const RegisterForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -66,6 +67,7 @@ const RegisterForm = () => {
       }
 
       // Redirect to login page or dashboard
+      await completeOnboarding();
       await user?.reload();
       router.push(siteConfig.pages.login);
     } catch (err) {

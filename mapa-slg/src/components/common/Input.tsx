@@ -49,7 +49,7 @@ const Input = (props: CustomInputProps) => {
           "placeholder:text-default-700/50 dark:placeholder:text-white/60",
         ],
       }}
-      labelPlacement="inside"
+      labelPlacement="outside"
       radius="lg"
       lang="es"
       isInvalid={props.errorMessage ? true : false}
