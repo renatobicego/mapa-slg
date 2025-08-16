@@ -16,7 +16,7 @@ export const registerUserService = async (payload: IUserRegistration) => {
   }
 };
 
-export const addMeMapService = async (formData: FormData) => {
+export const addMeMapService = async (formData: FormData, token: string) => {
   try {
     const { data } = await axios.put(
       `${siteConfig.serverUrl}/auth/profile`,
@@ -24,6 +24,7 @@ export const addMeMapService = async (formData: FormData) => {
       {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       }
     );

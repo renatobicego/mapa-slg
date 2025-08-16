@@ -18,6 +18,7 @@ import AddMeMap from "./AddMeMap";
 import ImageDropzone from "../common/ImageDropzone";
 import { useState } from "react";
 import { addMeMapService } from "@/api/auth";
+import { useAuth } from "@clerk/nextjs";
 
 const AddMeMapModal = () => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -31,6 +32,7 @@ const AddMeMapModal = () => {
     reset,
   } = useForm<IUserMapRegistration>();
   const [loading, setLoading] = useState(false);
+  const { getToken } = useAuth();
 
   const handleLocationChange = (lat: number, lng: number) => {
     setValue("location.lat", lat);
@@ -51,7 +53,9 @@ const AddMeMapModal = () => {
       formData.append("location.lat", String(data.location.lat));
       formData.append("location.lng", String(data.location.lng));
 
-      await addMeMapService(formData);
+      const token = await getToken();
+      if (!token) throw new Error("Usuario no autenticado");
+      await addMeMapService(formData, token);
 
       addToast({
         title: "Te has registrado en el mapa",
