@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from "mongoose";
-import bcrypt from "bcryptjs";
 import { IUser } from "../types/index.js";
 
 export interface IUserDocument extends IUser, Document {
@@ -29,11 +28,6 @@ const UserSchema = new Schema<IUserDocument>(
         /^\S+@\S+\.\S+$/,
         "Por favor proporciona una dirección de email válida",
       ],
-    },
-    password: {
-      type: String,
-      required: [true, "La contraseña es obligatoria"],
-      minlength: [6, "La contraseña debe tener al menos 6 caracteres"],
     },
     phone: {
       type: String,
@@ -136,26 +130,6 @@ const UserSchema = new Schema<IUserDocument>(
 );
 
 UserSchema.index({ location: "2dsphere" }, { sparse: true });
-
-// Hash password before saving
-UserSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-
-  try {
-    const salt = await bcrypt.genSalt(12);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error as Error);
-  }
-});
-
-// Method to compare passwords
-UserSchema.methods.comparePassword = async function (
-  candidatePassword: string
-): Promise<boolean> {
-  return bcrypt.compare(candidatePassword, this.password);
-};
 
 // Validation for role-specific fields
 UserSchema.pre("validate", function (next) {

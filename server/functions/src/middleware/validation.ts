@@ -2,22 +2,6 @@ import { body, validationResult } from "express-validator";
 import { Request, Response, NextFunction } from "express";
 
 export const validateRegistration = [
-  body("name")
-    .trim()
-    .isLength({ min: 2, max: 50 })
-    .withMessage("El nombre debe tener entre 2 y 50 caracteres")
-    .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
-    .withMessage("El nombre solo puede contener letras y espacios"),
-
-  body("email")
-    .isEmail()
-    .normalizeEmail()
-    .withMessage("Por favor proporciona una dirección de email válida"),
-
-  body("password")
-    .isLength({ min: 6 })
-    .withMessage("La contraseña debe tener al menos 6 caracteres"),
-
   body("phone")
     .optional()
     .matches(/^\+?[\d\s\-\(\)]+$/)

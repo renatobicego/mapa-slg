@@ -53,7 +53,6 @@ router.post(
       const userToCreate: any = {
         name: userData.name,
         email: userData.email.trim(),
-        password: userData.password,
         role: userData.role,
         phone: userData.phone?.trim(),
       };

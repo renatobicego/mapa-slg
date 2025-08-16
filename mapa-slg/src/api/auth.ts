@@ -4,7 +4,6 @@ import axios, { AxiosError } from "axios";
 
 export const registerUserService = async (payload: IUserRegistration) => {
   try {
-    console.log(payload);
     const { data } = await axios.post(
       `${siteConfig.serverUrl}/auth/register`,
       payload
