@@ -1,7 +1,6 @@
 import express from "express";
 import { User } from "../models/User.js";
 import { AuthRequest } from "../middleware/auth.js";
-import { getFileUrl } from "../utils/firebase/getFileUrl.js";
 
 const router = express.Router();
 
@@ -14,19 +13,11 @@ router.get("/", async (_req: AuthRequest, res) => {
 
     const total = await User.countDocuments();
 
-    const usersWithProfileUrlImage = users.map((user) => {
-      const userObject = user.toObject();
-      return {
-        ...userObject,
-        profileImage: getFileUrl(userObject.profileImage),
-      };
-    });
-
     res.json({
       success: true,
       message: "Usuarios obtenidos exitosamente",
       data: {
-        users: usersWithProfileUrlImage,
+        users: users,
         totalUsers: total,
       },
     });

@@ -1,5 +1,6 @@
 import { siteConfig } from "@/app/config";
-import { IUserRegistration } from "@/types/types";
+import { uploadFileAndGetUrl } from "@/lib/uploadFile";
+import { IUserMapRegistration, IUserRegistration } from "@/types/types";
 import axios, { AxiosError } from "axios";
 
 export const registerUserService = async (payload: IUserRegistration) => {
@@ -16,14 +17,26 @@ export const registerUserService = async (payload: IUserRegistration) => {
   }
 };
 
-export const addMeMapService = async (formData: FormData, token: string) => {
+export const addMeMapService = async (
+  formData: IUserMapRegistration,
+  token: string
+) => {
   try {
+    const newData: IUserMapRegistration & { profileImageUrl?: string } = {
+      ...formData,
+    };
+    if (formData.profileImage?.[0]) {
+      newData.profileImageUrl = await uploadFileAndGetUrl(
+        formData.profileImage[0]
+      );
+    }
+    delete newData.profileImage;
     const { data } = await axios.put(
       `${siteConfig.serverUrl}/auth/profile`,
-      formData,
+      newData,
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       }

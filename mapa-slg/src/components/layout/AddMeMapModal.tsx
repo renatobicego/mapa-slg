@@ -43,19 +43,10 @@ const AddMeMapModal = () => {
   const onSubmit = async (data: IUserMapRegistration) => {
     try {
       setLoading(true);
-      const formData = new FormData();
-
-      // Image from ImageDropzone (stored as File)
-      if (data.profileImage?.[0])
-        formData.append("profileImage", data.profileImage[0]);
-
-      formData.append("description", data.description || "");
-      formData.append("location.lat", String(data.location.lat));
-      formData.append("location.lng", String(data.location.lng));
 
       const token = await getToken();
       if (!token) throw new Error("Usuario no autenticado");
-      await addMeMapService(formData, token);
+      await addMeMapService(data, token);
 
       addToast({
         title: "Te has registrado en el mapa",

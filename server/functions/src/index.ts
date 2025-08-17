@@ -8,7 +8,6 @@ import { connectDatabase } from "./config/database";
 import authRoutes from "./routes/auth";
 import userRoutes from "./routes/users";
 import { clerkMiddleware } from "@clerk/express";
-
 // Load environment variables
 dotenv.config();
 
@@ -54,7 +53,6 @@ app.use(limiter);
 
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Health check endpoint
 app.get("/health", (_req, res) => {

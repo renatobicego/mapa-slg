@@ -44,7 +44,7 @@ export interface IUserMapRegistration {
     lng: number;
   };
   description?: string;
-  profileImage: FileList | null;
+  profileImage?: FileList | null;
 }
 
 export interface IUserLogin {

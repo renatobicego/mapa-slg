@@ -16,11 +16,7 @@ import {
 } from "../middleware/validation.js";
 import { validateFrontendToken } from "../middleware/auth.js";
 import { Document } from "mongoose";
-import multer from "multer";
-import path from "path";
-import { uploadFileAndGetUrl } from "../utils/firebase/uploadFIle.js";
 import { deleteFile } from "../utils/firebase/deleteFile.js";
-import sharp from "sharp";
 import { clerkClient, getAuth, requireAuth } from "@clerk/express";
 
 const router = express.Router();
@@ -225,96 +221,52 @@ router.get("/profile", requireAuth(), async (req, res) => {
   }
 });
 
-const upload = multer({ storage: multer.memoryStorage() });
+router.put("/profile", requireAuth(), async (req, res) => {
+  try {
+    const updates = req.body;
+    const { userId } = getAuth(req);
+    const user = await clerkClient.users.getUser(userId);
 
-router.put(
-  "/profile",
-  requireAuth(),
-  upload.single("profileImage"),
-  async (req, res) => {
-    try {
-      const updates = req.body;
-      const { userId } = getAuth(req);
-      const user = await clerkClient.users.getUser(userId);
+    const userProfile = await User.findOne({
+      email: user.emailAddresses[0].emailAddress,
+    });
 
-      const userProfile = await User.findOne({
-        email: user.emailAddresses[0].emailAddress,
-      });
-
-      if (!userProfile) {
-        return res.status(404).json({
-          success: false,
-          message: "Perfil no encontrado",
-        });
-      }
-
-      // Remove sensitive fields
-      delete updates.password;
-      delete updates.email;
-      delete updates._id;
-
-      // Handle profile image upload (optional)
-      if (req.file) {
-        const extension = path.extname(req.file.originalname);
-        const filename = `imagenes-perfil/${
-          userProfile.name
-        }-${Date.now()}${extension}`;
-        const compressedBuffer = await sharp(req.file.buffer)
-          .resize(800, 800, { fit: "inside" })
-          .jpeg({ quality: 70 })
-          .withMetadata()
-          .toBuffer();
-        const imageUrl = await uploadFileAndGetUrl(
-          compressedBuffer,
-          filename,
-          req.file.mimetype
-        );
-
-        if (userProfile.profileImage) {
-          // Delete previous image if it exists
-          await deleteFile(userProfile.profileImage);
-        }
-        updates.profileImage = imageUrl; // Add image URL to updates
-      }
-
-      const location = {
-        coordinates: [
-          parseFloat(updates["location.lng"]),
-          parseFloat(updates["location.lat"]),
-        ],
-        type: "Point",
-      };
-
-      // Update fields
-      Object.assign(userProfile, { ...updates, location });
-      await userProfile.save();
-
-      return res.json({
-        success: true,
-        message: "Perfil actualizado exitosamente",
-        user: userProfile.toJSON(),
-      });
-    } catch (error: any) {
-      console.error("Error al actualizar perfil:", error);
-
-      if (error.name === "ValidationError") {
-        return res.status(400).json({
-          success: false,
-          message: "Error de validación",
-          errors: Object.values(error.errors).map((err: any) => ({
-            field: err.path,
-            message: err.message,
-          })),
-        });
-      }
-
-      return res.status(500).json({
+    if (!userProfile) {
+      return res.status(404).json({
         success: false,
-        message:
-          "Error interno del servidor durante la actualización del perfil",
+        message: "Perfil no encontrado",
       });
     }
+    const profileImage = req.body.profileImageUrl;
+
+    if (profileImage) {
+      if (userProfile.profileImage) {
+        await deleteFile(userProfile.profileImage);
+      }
+
+      updates.profileImage = profileImage;
+    }
+
+    const location = {
+      coordinates: [updates.location.lng, updates.location.lat],
+      type: "Point",
+    };
+
+    Object.assign(userProfile, { ...updates, location });
+    await userProfile.save();
+
+    return res.json({
+      success: true,
+      message: "Perfil actualizado exitosamente",
+      user: userProfile.toJSON(),
+    });
+  } catch (error: any) {
+    console.error("Error al actualizar perfil:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error interno del servidor durante la actualización del perfil",
+    });
   }
-);
+});
 
 export default router;
