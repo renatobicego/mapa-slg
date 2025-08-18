@@ -18,6 +18,7 @@ import { validateFrontendToken } from "../middleware/auth.js";
 import { Document } from "mongoose";
 import { deleteFile } from "../utils/firebase/deleteFile.js";
 import { clerkClient, getAuth, requireAuth } from "@clerk/express";
+import { log } from "firebase-functions/logger";
 
 const router = express.Router();
 
@@ -224,6 +225,7 @@ router.get("/profile", requireAuth(), async (req, res) => {
 router.put("/profile", requireAuth(), async (req, res) => {
   try {
     const updates = req.body;
+    log("Actualizando perfil con datos:", updates);
     const { userId } = getAuth(req);
     const user = await clerkClient.users.getUser(userId);
 
@@ -248,7 +250,7 @@ router.put("/profile", requireAuth(), async (req, res) => {
     }
 
     const location = {
-      coordinates: [updates.location.lng, updates.location.lat],
+      coordinates: [Number(updates.location.lng), Number(updates.location.lat)],
       type: "Point",
     };
 
@@ -261,7 +263,7 @@ router.put("/profile", requireAuth(), async (req, res) => {
       user: userProfile.toJSON(),
     });
   } catch (error: any) {
-    console.error("Error al actualizar perfil:", error);
+    console.error("Error al actualizar perfil:", req.body);
     return res.status(500).json({
       success: false,
       message: "Error interno del servidor durante la actualización del perfil",

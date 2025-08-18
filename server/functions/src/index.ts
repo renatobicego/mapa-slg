@@ -53,6 +53,7 @@ app.use(limiter);
 
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Health check endpoint
 app.get("/health", (_req, res) => {
