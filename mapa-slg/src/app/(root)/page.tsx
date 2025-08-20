@@ -1,14 +1,16 @@
 import Button from "@/components/common/Button";
 import PeopleMap from "@/components/pages/PeopleMap";
-import { siteConfig } from "./config";
 import Link from "next/link";
 import AddMeMapModal from "@/components/layout/AddMeMapModal";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { siteConfig } from "../config";
+import HeroSection from "@/components/pages/HeroSection";
 
 export default async function Home() {
   return (
-    <main>
-      <menu>
+    <main className="-my-22">
+      <HeroSection />
+      <menu className="absolute">
         <SignedIn>
           <AddMeMapModal />
         </SignedIn>
@@ -18,7 +20,7 @@ export default async function Home() {
           </Button>
         </SignedOut>
       </menu>
-      <section className="h-[80vh] w-[90vw]">
+      <section className="h-[98dvh] w-screen px-2 rounded-xl">
         <PeopleMap />
       </section>
     </main>

@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat, Hind } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { ClerkProvider } from "@clerk/nextjs";
 import { esUY } from "@clerk/localizations";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const montserrat = Montserrat({
   subsets: ["latin"],
+  variable: "--font-montserrat",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const hind = Hind({
   subsets: ["latin"],
+  variable: "--font-hind",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -29,7 +31,7 @@ export default function RootLayout({
     <ClerkProvider localization={esUY}>
       <html lang="es">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-dark-blue`}
+          className={`${montserrat.variable} ${hind.variable} antialiased `}
         >
           <Providers>{children}</Providers>
         </body>

@@ -60,8 +60,8 @@ const PeopleMap = () => {
     >
       <Map
         mapId={"a"}
-        defaultCenter={{ lat: 20, lng: 20 }}
-        defaultZoom={3}
+        defaultCenter={{ lat: -36, lng: -64 }}
+        defaultZoom={5}
         minZoom={3}
         gestureHandling={"greedy"}
         disableDefaultUI
