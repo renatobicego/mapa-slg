@@ -9,5 +9,8 @@ export const siteConfig = {
     login: "/iniciar-sesion",
     home: "/",
     onboarding: "/bienvenida",
+    history: "/historia",
+    help: "/participar",
+    profile: "/perfil",
   },
 };

@@ -12,15 +12,20 @@ import {
   Textarea,
   Form,
   addToast,
+  ButtonProps,
 } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import AddMeMap from "./AddMeMap";
 import ImageDropzone from "../common/ImageDropzone";
-import { useState } from "react";
+import { cloneElement, useState } from "react";
 import { addMeMapService } from "@/api/auth";
 import { useAuth } from "@clerk/nextjs";
 
-const AddMeMapModal = () => {
+const AddMeMapModal = ({
+  button,
+}: {
+  button?: React.ReactElement<ButtonProps>;
+}) => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const {
     setValue,
@@ -67,9 +72,13 @@ const AddMeMapModal = () => {
       setLoading(false);
     }
   };
+
+  const clonedButton = button
+    ? cloneElement(button, { onClick: onOpen })
+    : null;
   return (
     <>
-      <Button onPress={onOpen}>Cargate en el mapa</Button>
+      {clonedButton ?? <Button onPress={onOpen}>Cargate en el mapa</Button>}
       <Modal
         placement="center"
         size="5xl"

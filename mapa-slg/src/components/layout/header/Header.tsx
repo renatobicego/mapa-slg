@@ -1,4 +1,5 @@
 "use client";
+import { siteConfig } from "@/app/config";
 import { useHeroStore } from "@/stores/useHeroStore";
 import {
   Image,
@@ -11,21 +12,43 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle,
 } from "@heroui/react";
+import { usePathname } from "next/navigation";
 import React from "react";
+import AddMeMapModal from "../AddMeMapModal";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignOutButton,
+} from "@clerk/nextjs";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const { isVisible } = useHeroStore();
+  const { isVisible: isHeroSectionShowed } = useHeroStore();
+  const pathname = usePathname();
 
   const menuItems = [
-    "Inicio",
-    "Mi Perfil",
-    "Sumarme al Mapa",
-    "Nuestra Historia",
-    "¿Cómo Participar?",
-    "Cerrar Sesión",
+    { label: "Inicio", href: siteConfig.pages.home },
+    { label: "Mi Perfil", href: siteConfig.pages.profile, loggedIn: true },
+    {
+      label: "Sumarme al Mapa",
+      modal: (
+        <AddMeMapModal
+          button={
+            <button className="font-semibold text-black">
+              Sumarme al Mapa
+            </button>
+          }
+        />
+      ),
+      loggedIn: true,
+    },
+    { label: "Nuestra Historia", href: siteConfig.pages.history },
+    { label: "¿Cómo Participar?", href: siteConfig.pages.help },
+    { label: "Cerrar Sesión", signOut: true },
   ];
 
+  const isVisible = isHeroSectionShowed && pathname === siteConfig.pages.home;
   return (
     <Navbar
       className={`
@@ -39,7 +62,7 @@ const Header = () => {
       classNames={{
         base: "bg-transparent p-4",
         wrapper: `bg-white shadow-md rounded-xl transition-all duration-100  ${
-          isMenuOpen ? "rounded-b-none shadow-none delay-100" : "delay-300"
+          isMenuOpen ? "rounded-b-none shadow-none" : ""
         } max-w-xl`,
         menu: `mx-4 w-auto pt-32 shadow-lg rounded-xl `,
       }}
@@ -61,7 +84,7 @@ const Header = () => {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link className="text-black font-bold" href="#">
             Features
           </Link>
         </NavbarItem>
@@ -93,36 +116,70 @@ const Header = () => {
 
       <NavbarMenu
         motionProps={{
-          initial: { height: "0dvh", y: -40 },
+          initial: { height: "0dvh", opacity: 0, y: -20 },
           animate: {
             height: isMenuOpen ? "90dvh" : "0dvh",
-            y: isMenuOpen ? 0 : -40,
+            opacity: isMenuOpen ? 1 : 0,
+            y: isMenuOpen ? 0 : -20,
           },
-          exit: { height: "0dvh", y: -60 },
+          exit: { height: "0dvh", opacity: 0, y: -20 },
           transition: {
-            duration: 0.5,
+            duration: 0.3,
             height: { duration: 0.3 },
-            y: { duration: 0.5 },
+            opacity: { duration: 0.2 },
+            y: { duration: 0.3 },
           },
         }}
         className="overflow-hidden"
       >
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
-            <Link
-              className="w-full"
-              color={
-                index === 2
-                  ? "primary"
-                  : index === menuItems.length - 1
-                  ? "danger"
-                  : "foreground"
-              }
-              href="#"
-              size="lg"
-            >
-              {item}
-            </Link>
+        {menuItems.map(({ label, href, modal, signOut, loggedIn }, index) => (
+          <NavbarMenuItem key={`${label}-${index}`}>
+            {href ? (
+              loggedIn ? (
+                <SignedIn>
+                  <Link
+                    className={`text-black font-semibold`}
+                    href={href}
+                    size="lg"
+                  >
+                    {label}
+                  </Link>
+                </SignedIn>
+              ) : (
+                <Link
+                  className={`text-black font-semibold`}
+                  href={href}
+                  size="lg"
+                >
+                  {label}
+                </Link>
+              )
+            ) : modal ? (
+              loggedIn ? (
+                <SignedIn>{modal}</SignedIn>
+              ) : (
+                modal
+              )
+            ) : (
+              signOut && (
+                <>
+                  <SignedIn>
+                    <SignOutButton>
+                      <button className="font-semibold text-danger">
+                        Cerrar Sesión
+                      </button>
+                    </SignOutButton>
+                  </SignedIn>
+                  <SignedOut>
+                    <SignInButton>
+                      <button className="font-semibold text-yellow">
+                        Iniciar Sesión
+                      </button>
+                    </SignInButton>
+                  </SignedOut>
+                </>
+              )
+            )}
           </NavbarMenuItem>
         ))}
       </NavbarMenu>

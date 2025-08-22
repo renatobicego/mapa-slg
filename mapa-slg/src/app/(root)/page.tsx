@@ -8,7 +8,7 @@ import HeroSection from "@/components/pages/HeroSection";
 
 export default async function Home() {
   return (
-    <main className="-my-22">
+    <main className="-my-22 overflow-hidden">
       <HeroSection />
       <menu className="absolute">
         <SignedIn>
