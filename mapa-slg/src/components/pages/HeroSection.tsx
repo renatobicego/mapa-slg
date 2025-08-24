@@ -12,7 +12,7 @@ const HeroSection = () => {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="w-screen h-screen fixed top-0 left-0 flex flex-col items-start justify-end p-8 backdrop-blur-xs backdrop-brightness-90 z-100 pb-20"
+          className="w-screen h-[100dvh] fixed top-0 left-0 flex flex-col items-start justify-end p-8 backdrop-blur-xs backdrop-brightness-90 z-100 pb-20"
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

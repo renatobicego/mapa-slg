@@ -9,7 +9,6 @@ import {
   Checkbox,
   CardBody,
   Form,
-  Link,
 } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -93,7 +92,7 @@ const RegisterForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-2xl">
+    <Card className="w-full max-w-2xl font-(family-name:--font-montserrat)">
       <CardHeader className="flex flex-col gap-2 items-start">
         <h1 className="text-2xl font-bold text-center">Bienvenido/a</h1>
         <p className="text-center">Últimos pasos para completar su registro</p>
@@ -263,11 +262,6 @@ const RegisterForm = () => {
           >
             {isLoading ? "Creando..." : "Crear Perfil"}
           </Button>
-
-          <p className="text-sm text-gray-600">
-            ¿Ya tenés una cuenta? {""}
-            <Link href={siteConfig.pages.login}>Inicia sesión</Link>
-          </p>
         </Form>
       </CardBody>
     </Card>

@@ -20,7 +20,7 @@ export default async function Home() {
           </Button>
         </SignedOut>
       </menu>
-      <section className="h-[98dvh] w-screen px-2 rounded-xl">
+      <section className="h-[95dvh] w-screen px-2 rounded-xl">
         <PeopleMap />
       </section>
     </main>

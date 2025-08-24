@@ -90,3 +90,15 @@ main {
   margin-top: 6px;
   height: 30px;
 }
+
+.cl-formFieldInput {
+  @apply !bg-default-200/50 !h-10 text-small rounded-xl px-4;
+}
+
+.cl-formButtonPrimary {
+  @apply h-11 bg-black text-white px-5  font-semibold;
+}
+
+.cl-rootBox {
+  font-family: var(--font-montserrat);
+}

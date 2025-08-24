@@ -81,6 +81,7 @@ const AddMeMapModal = ({
       {clonedButton ?? <Button onPress={onOpen}>Cargate en el mapa</Button>}
       <Modal
         placement="center"
+        scrollBehavior="inside"
         size="5xl"
         isOpen={isOpen}
         onOpenChange={onOpenChange}

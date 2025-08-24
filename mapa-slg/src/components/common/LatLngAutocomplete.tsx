@@ -6,6 +6,7 @@ import usePlacesService from "react-google-autocomplete/lib/usePlacesAutocomplet
 const LatLngAutocomplete = ({
   handleLocationChange,
   map,
+  className,
 }: {
   handleLocationChange: (
     lat: number,
@@ -13,6 +14,7 @@ const LatLngAutocomplete = ({
     description?: string
   ) => void;
   map: google.maps.Map | null;
+  className?: string;
 }) => {
   const { placePredictions, getPlacePredictions, isPlacePredictionsLoading } =
     usePlacesService({
@@ -51,10 +53,11 @@ const LatLngAutocomplete = ({
       }}
       radius="lg"
       lang="es"
-      description="Ingrese una ubicación y seleccione de la lista."
+      description="Podés seleccionar desde los resultados o cargar tu ubicación en el mapa"
       onValueChange={(value) => getPlacePredictions({ input: value })}
       onSelectionChange={(key) => handleSelectPlace(key as string)}
       isLoading={isPlacePredictionsLoading}
+      className={className}
     >
       {placePredictions.map(
         (place: { place_id: string; description: string }) => (
