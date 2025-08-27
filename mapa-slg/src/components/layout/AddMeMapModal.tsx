@@ -3,7 +3,6 @@
 import { IUserMapRegistration } from "@/types/types";
 import {
   useDisclosure,
-  Button,
   Modal,
   ModalContent,
   ModalHeader,
@@ -20,6 +19,9 @@ import ImageDropzone from "../common/ImageDropzone";
 import { cloneElement, useState } from "react";
 import { addMeMapService } from "@/api/auth";
 import { useAuth } from "@clerk/nextjs";
+import useMediaQuery from "@/hooks/useMediaQuery";
+import Button from "../common/Button";
+import { PlusIcon } from "lucide-react";
 
 const AddMeMapModal = ({
   button,
@@ -73,16 +75,23 @@ const AddMeMapModal = ({
     }
   };
 
+  const screenSize = useMediaQuery();
+  const modalSize = screenSize.width && screenSize.width < 768 ? "full" : "5xl";
+
   const clonedButton = button
     ? cloneElement(button, { onClick: onOpen })
     : null;
   return (
     <>
-      {clonedButton ?? <Button onPress={onOpen}>Cargate en el mapa</Button>}
+      {clonedButton ?? (
+        <Button startContent={<PlusIcon className="size-5" />} onPress={onOpen}>
+          Sumate
+        </Button>
+      )}
       <Modal
         placement="center"
         scrollBehavior="inside"
-        size="5xl"
+        size={modalSize}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
       >
