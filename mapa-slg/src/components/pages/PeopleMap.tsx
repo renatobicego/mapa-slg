@@ -1,7 +1,7 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 
-import { APIProvider, Map, MapEvent } from "@vis.gl/react-google-maps";
+import { Map, MapEvent } from "@vis.gl/react-google-maps";
 
 import { FeatureCollection, GeoJsonProperties, Point } from "geojson";
 import { InfoWindowContent } from "../layout/markers/InfoWindowContent";
@@ -11,8 +11,6 @@ import { getUsersService } from "@/api/users";
 import { mapUsersToGeojson } from "@/utils/users";
 import { useDisclosure } from "@heroui/react";
 // import { loadCastlesGeojson } from "@/utils/castle";
-
-const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
 
 const PeopleMap = () => {
   const [users, setUsers] = useState<FeatureCollection<
@@ -53,11 +51,7 @@ const PeopleMap = () => {
   );
 
   return (
-    <APIProvider
-      apiKey={API_KEY}
-      version={"beta"}
-      libraries={["marker", "places"]}
-    >
+    <>
       <Map
         mapId={"a"}
         defaultCenter={{ lat: -36, lng: -64 }}
@@ -88,7 +82,7 @@ const PeopleMap = () => {
           onOpenChange={onOpenChange}
         />
       </Map>
-    </APIProvider>
+    </>
   );
 };
 

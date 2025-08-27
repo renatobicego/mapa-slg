@@ -23,18 +23,17 @@ const AddMeMap = ({ lat, lng, handleLocationChange }: AddMeMapProps) => {
 
   // Initialize the map
   useEffect(() => {
-    if (ref.current && !map) {
-      const initializedMap = new google.maps.Map(ref.current, {
-        center: { lat: lat ?? -32.8941303, lng: lng ?? -68.8419201 },
-        zoom: 14,
-        disableDefaultUI: true, // disable default controls
-        zoomControl: false, // optionally enable zoom
-        streetViewControl: false,
-        mapTypeControl: false,
-        mapId: "google-maps-" + id,
-      });
-      setMap(initializedMap);
-    }
+    if (!ref.current || map || !window.google?.maps) return;
+    const initializedMap = new google.maps.Map(ref.current, {
+      center: { lat: lat ?? -32.8941303, lng: lng ?? -68.8419201 },
+      zoom: 14,
+      disableDefaultUI: true, // disable default controls
+      zoomControl: false, // optionally enable zoom
+      streetViewControl: false,
+      mapTypeControl: false,
+      mapId: "google-maps-" + id,
+    });
+    setMap(initializedMap);
   }, [map, lat, lng, id]);
 
   // Map click listener
