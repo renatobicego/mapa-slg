@@ -1,3 +1,4 @@
+"use client";
 import AddMeMapModal from "@/components/layout/AddMeMapModal";
 
 export default function Help() {
