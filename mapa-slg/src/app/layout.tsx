@@ -37,7 +37,7 @@ export default function RootLayout({
     <ClerkProvider localization={esUY}>
       <html lang="es">
         <body
-          className={`${montserrat.variable} ${hind.variable} antialiased `}
+          className={`${montserrat.variable} ${hind.variable} antialiased overflow-hidden`}
         >
           <Providers>{children}</Providers>
         </body>

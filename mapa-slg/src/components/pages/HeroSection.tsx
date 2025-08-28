@@ -19,7 +19,7 @@ const HeroSection = () => {
           transition={{ duration: 0.8, ease: "easeInOut" }}
         >
           <Image alt="Logo 100 años" src="/logo-100-anios.png" />
-          <h2 className="text-xl mt-4 max-w-xl text-white font-bold drop-shadow">
+          <h2 className="heading-2 mt-4 md:max-w-xl lg:max-w-3xl text-white font-bold drop-shadow">
             Nuestro querido colegio San Luis Gonzaga cumple 100 años y lo vamos
             a celebrar creando el Mapa del San Lucho. <br /> Agregá tu pin y
             formá parte de esta gran historia

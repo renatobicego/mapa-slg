@@ -5,7 +5,7 @@ const Button = (props: ButtonProps) => {
   return (
     <HeroUIButton
       {...props}
-      className={`h-11 bg-black text-white px-5 font-(family-name:--font-montserrat) font-semibold ${props.className}`}
+      className={`h-11 bg-black text-white px-5 font-(family-name:--font-montserrat) font-semibold md:text-base  ${props.className}`}
     />
   );
 };

@@ -49,13 +49,12 @@ const ImageDropzone = ({
         name="profileImage"
         control={control}
         rules={{
-          required: "Please select a file",
           validate: {
             fileSize: (files) => {
               if (!files || !files[0]) return true;
               return (
                 files[0].size <= 5 * 1024 * 1024 ||
-                "File size must be less than 5MB"
+                "El archivo debe ser menor a 5MB"
               );
             },
             fileType: (files) => {

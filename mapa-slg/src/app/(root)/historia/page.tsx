@@ -26,13 +26,10 @@ export default function HistoryPage() {
     <motion.main
       animate={{ backgroundColor: bgColor }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen text-white -my-24 flex flex-col items-center justify-center gap-8 pb-20"
+      className="h-screen text-white -my-24 flex flex-col items-center justify-start gap-8 pb-20 overflow-y-auto"
     >
-      <section
-        ref={section1Ref}
-        className="flex flex-col items-start justify-start pt-32 w-full gap-8 "
-      >
-        <div>
+      <section className="flex flex-col items-start justify-start pt-32 lg:pt-36 2xl:pt-40 w-full gap-8 max-w-screen-lg">
+        <div className="flex flex-col items-start justify-start gap-2">
           <h1 className="heading-1">Nuestra Historia</h1>
           <p>
             Nuestro Colegio San Luis Gonzaga es heredero de una rica tradición
@@ -41,12 +38,13 @@ export default function HistoryPage() {
           </p>
         </div>
         <Image
+          ref={section1Ref}
           alt="Imagen 1"
           src="/image1.jpeg"
           className="w-full"
           removeWrapper
         />
-        <div>
+        <div className="flex flex-col items-start justify-start gap-2">
           <h2 className="heading-2">Los primeros pasos (1609-1767)</h2>
           <ul className="mt-4 list-disc pl-5">
             <li>
@@ -68,14 +66,12 @@ export default function HistoryPage() {
           src="/image3.jpeg"
           className="w-full"
           removeWrapper
+          ref={section2Ref}
         />
       </section>
 
-      <section
-        ref={section2Ref}
-        className="flex flex-col items-start justify-start gap-8"
-      >
-        <div>
+      <section className="flex flex-col items-start justify-start gap-8 max-w-screen-lg">
+        <div className="flex flex-col items-start justify-start gap-2">
           <h3 className="heading-2">El regreso y renacimiento (1878-1926)</h3>
           <ul className="mt-4 list-disc pl-5">
             <li>1878: Los jesuitas regresan a Mendoza tras su restauración.</li>
@@ -95,14 +91,12 @@ export default function HistoryPage() {
           src="/image2.jpg"
           className="w-full"
           removeWrapper
+          ref={section3Ref}
         />
       </section>
 
-      <section
-        ref={section3Ref}
-        className="flex flex-col items-start justify-center gap-8 "
-      >
-        <div>
+      <section className="flex flex-col items-start justify-center gap-8 max-w-screen-lg">
+        <div className="flex flex-col items-start justify-start gap-2">
           <h4 className="heading-2">
             Crecimiento y transformación (1972-2025)
           </h4>
@@ -125,7 +119,7 @@ export default function HistoryPage() {
             <li>2022: Más de 1000 estudiantes forman nuestra comunidad.</li>
           </ul>
         </div>
-        <div>
+        <div className="flex flex-col items-start justify-start gap-2">
           <h4 className="heading-2">
             Patrón de la Juventud Católica (1568-1591)
           </h4>

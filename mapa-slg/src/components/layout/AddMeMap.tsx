@@ -108,14 +108,15 @@ const AddMeMap = ({ lat, lng, handleLocationChange }: AddMeMapProps) => {
           handleLocationChange(lat, lng);
         }}
         map={map}
-        className="absolute top-0 left-0 z-10 w-auto sm:w-1/2 bg-white m-2 p-3 rounded-2xl"
+        className="absolute top-0 left-0 z-10 w-auto  bg-white m-2 p-3 rounded-2xl"
       />
       <div ref={ref} className="h-[60vh] w-full rounded-2xl" />
 
       {/* Floating button for geolocation */}
       <button
         onClick={handleGetCurrentLocation}
-        className="absolute top-36 left-2 bg-white shadow-md rounded-full text-small p-3 hover:bg-gray-100 transition font-semibold"
+        type="button"
+        className="absolute top-36 md:top-32 left-2 bg-white shadow-md rounded-full text-small p-3 hover:bg-gray-100 transition font-semibold"
         aria-label="Get current location"
       >
         📍 Ubicación Actual

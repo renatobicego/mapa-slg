@@ -104,7 +104,7 @@ main {
 }
 
 ul {
-  @apply font-(family-name:--font-hind);
+  @apply font-(family-name:--font-hind) xl:text-lg 2xl:text-xl;
 }
 
 .heading-1 {
@@ -121,4 +121,8 @@ ul {
 
 .heading-4 {
   @apply text-base md:text-lg xl:text-xl 2xl:text-2xl font-bold font-(family-name:--font-montserrat);
+}
+
+p {
+  @apply font-(family-name:--font-hind) xl:text-lg 2xl:text-xl;
 }

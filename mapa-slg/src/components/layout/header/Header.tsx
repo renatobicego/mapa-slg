@@ -20,8 +20,19 @@ import {
   SignedOut,
   SignInButton,
   SignOutButton,
+  UserButton,
   useUser,
 } from "@clerk/nextjs";
+
+type MenuItem = {
+  label: string;
+  href?: string;
+  modal?: React.ReactNode;
+  signOut?: boolean;
+  loggedIn?: boolean;
+  signIn?: boolean;
+  component?: React.ReactNode;
+};
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -29,7 +40,7 @@ const Header = () => {
   const { isSignedIn } = useUser();
   const pathname = usePathname();
 
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     { label: "Inicio", href: siteConfig.pages.home },
     { label: "Mi Perfil", href: siteConfig.pages.profile, loggedIn: true },
     {
@@ -37,7 +48,7 @@ const Header = () => {
       modal: (
         <AddMeMapModal
           button={
-            <button className="font-semibold text-black">
+            <button className="font-semibold text-black text-large cursor-pointer">
               Sumarme al Mapa
             </button>
           }
@@ -50,6 +61,38 @@ const Header = () => {
     { label: "Cerrar Sesión", signOut: true },
   ];
 
+  const desktopItems: MenuItem[] = [
+    {
+      label: "Sumarme al Mapa",
+      modal: (
+        <AddMeMapModal
+          button={
+            <button className="font-semibold text-black text-large cursor-pointer">
+              Sumarme al Mapa
+            </button>
+          }
+        />
+      ),
+      loggedIn: true,
+    },
+    { label: "Nuestra Historia", href: siteConfig.pages.history },
+    { label: "¿Cómo Participar?", href: siteConfig.pages.help },
+    {
+      label: "Mi Perfil",
+      component: (
+        <UserButton
+          appearance={{
+            elements: {
+              userButtonAvatarBox: "!w-10 !h-10 border-2 border-gray-300",
+            },
+          }}
+        />
+      ),
+      loggedIn: true,
+    },
+    { label: "Iniciar Sesión", signIn: true },
+  ];
+
   const isVisible = isHeroSectionShowed && pathname === siteConfig.pages.home;
 
   const renderMenuItem = ({
@@ -58,8 +101,32 @@ const Header = () => {
     modal,
     signOut,
     loggedIn,
-  }: (typeof menuItems)[number]) => {
+    signIn,
+    component,
+  }: MenuItem) => {
     const baseClasses = "text-black font-semibold";
+
+    if (component) {
+      return loggedIn ? (
+        isSignedIn ? (
+          <SignedIn>{component}</SignedIn>
+        ) : null
+      ) : (
+        component
+      );
+    }
+
+    if (signIn && !isSignedIn) {
+      return (
+        <SignedOut>
+          <SignInButton>
+            <button className="font-semibold text-yellow cursor-pointer text-large">
+              Iniciar Sesión
+            </button>
+          </SignInButton>
+        </SignedOut>
+      );
+    }
 
     if (href) {
       return loggedIn ? (
@@ -92,12 +159,14 @@ const Header = () => {
         <>
           <SignedIn>
             <SignOutButton>
-              <button className="font-semibold text-danger">{label}</button>
+              <button className="font-semibold text-danger text-large cursor-pointer">
+                {label}
+              </button>
             </SignOutButton>
           </SignedIn>
           <SignedOut>
             <SignInButton>
-              <button className="font-semibold text-yellow">
+              <button className="font-semibold text-yellow cursor-pointer text-large">
                 Iniciar Sesión
               </button>
             </SignInButton>
@@ -120,7 +189,7 @@ const Header = () => {
         base: "bg-transparent p-4",
         wrapper: `bg-white shadow-md rounded-xl transition-all duration-100 ${
           isMenuOpen ? "rounded-b-none shadow-none" : ""
-        } max-w-xl`,
+        } max-w-screen-xl`,
         menu: `mx-4 w-auto pt-32 shadow-lg rounded-xl`,
       }}
       isBlurred={false}
@@ -131,7 +200,8 @@ const Header = () => {
         <NavbarBrand className="h-full" as={Link} href={siteConfig.pages.home}>
           <Image
             alt="Logo"
-            src="/logo.png"
+            src={"/logo.png"}
+            srcSet="/logo-grande.png 2x"
             classNames={{
               wrapper: "w-full h-full py-1.5",
               img: "object-contain h-full",
@@ -141,33 +211,29 @@ const Header = () => {
       </NavbarContent>
 
       {/* Center items */}
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link className="text-black font-bold" href="#">
-            Features
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive>
-          <Link aria-current="page" href="#">
-            Customers
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Integrations
-          </Link>
-        </NavbarItem>
+      <NavbarContent
+        className="hidden lg:flex gap-6 items-center pt-0.5"
+        justify="center"
+      >
+        {desktopItems
+          .map((item) => {
+            const element = renderMenuItem(item);
+            return element ? { ...item, element } : null;
+          })
+          .filter(Boolean) // remove nulls
+          .map((item, index) => (
+            <NavbarItem key={`${item!.label}-${index}`}>
+              {item!.element}
+            </NavbarItem>
+          ))}
       </NavbarContent>
 
       {/* Right items */}
       <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
-        </NavbarItem>
         <NavbarItem>
           <NavbarMenuToggle
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            className="sm:hidden bg-black text-white h-9 w-9 rounded-full 
+            className="lg:hidden bg-black text-white h-9 w-9 rounded-full 
                        [&>span]:before:h-[1.3px] [&>span]:after:h-[1.3px] 
                        [&>span]:before:w-[17px] [&>span]:after:w-[17px]"
           />
