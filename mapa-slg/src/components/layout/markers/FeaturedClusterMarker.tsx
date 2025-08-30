@@ -84,7 +84,7 @@ export const FeaturesClusterMarker = React.memo(
           {displayAvatars.map((avatar, index) => (
             <Image
               key={avatar.id}
-              src={`${avatar.src}`}
+              src={`${avatar.src ? avatar.src : "/default-avatar.webp"}`}
               alt={avatar.alt || `Avatar ${avatar.id}`}
               className={`rounded-full  object-cover absolute border-2 ${indexBorderColor(
                 index

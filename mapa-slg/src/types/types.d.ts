@@ -45,6 +45,7 @@ export interface IUserMapRegistration {
   };
   description?: string;
   profileImage?: FileList | null;
+  defaultProfileImage?: string;
 }
 
 export interface IUserLogin {

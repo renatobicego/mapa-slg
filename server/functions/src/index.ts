@@ -98,10 +98,10 @@ app.use("*", (_req, res) => {
   });
 });
 
-// app.listen(3001, () => {
-//   console.log(`🚀 Servidor ejecutándose en el puerto ${3001}`);
-//   console.log(`🏥 Verificación de salud: http://localhost:${3001}/health`);
-// });
+app.listen(3001, () => {
+  console.log(`🚀 Servidor ejecutándose en el puerto ${3001}`);
+  console.log(`🏥 Verificación de salud: http://localhost:${3001}/health`);
+});
 
-export const api = functions.https.onRequest(app);
-// export default app;
+// export const api = functions.https.onRequest(app);
+export default app;

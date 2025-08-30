@@ -195,7 +195,7 @@ router.post(
 router.get("/profile", requireAuth(), async (req, res) => {
   try {
     const { userId } = getAuth(req);
-    const user = await clerkClient.users.getUser(userId);
+    const user = await clerkClient.users.getUser(userId || "");
 
     const userProfile = await User.findOne({
       email: user.emailAddresses[0].emailAddress,
@@ -227,7 +227,7 @@ router.put("/profile", requireAuth(), async (req, res) => {
     const updates = req.body;
     log("Actualizando perfil con datos:", updates);
     const { userId } = getAuth(req);
-    const user = await clerkClient.users.getUser(userId);
+    const user = await clerkClient.users.getUser(userId as string);
 
     const userProfile = await User.findOne({
       email: user.emailAddresses[0].emailAddress,
@@ -267,6 +267,50 @@ router.put("/profile", requireAuth(), async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Error interno del servidor durante la actualización del perfil",
+    });
+  }
+});
+
+router.delete("/profile/image", requireAuth(), async (req, res) => {
+  try {
+    const { userId } = getAuth(req);
+    const user = await clerkClient.users.getUser(userId as string);
+
+    const userProfile = await User.findOne({
+      email: user.emailAddresses[0].emailAddress,
+    });
+
+    if (!userProfile) {
+      return res.status(404).json({
+        success: false,
+        message: "Perfil no encontrado",
+      });
+    }
+
+    if (!userProfile.profileImage) {
+      return res.status(404).json({
+        success: false,
+        message: "Imagen de perfil no encontrada",
+      });
+    }
+
+    if (userProfile.profileImage) {
+      await deleteFile(userProfile.profileImage);
+    }
+
+    Object.assign(userProfile, { profileImage: undefined });
+    await userProfile.save();
+
+    return res.json({
+      success: true,
+      message: "Imagen de perfil eliminada exitosamente",
+    });
+  } catch (error: any) {
+    console.error("Error al actualizar perfil:", req.body);
+    return res.status(500).json({
+      success: false,
+      message:
+        "Error interno del servidor durante la eliminación de la imagen de perfil",
     });
   }
 });

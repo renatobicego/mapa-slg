@@ -16,12 +16,13 @@ import {
 import { useForm } from "react-hook-form";
 import AddMeMap from "./AddMeMap";
 import ImageDropzone from "../common/ImageDropzone";
-import { cloneElement, useState } from "react";
+import { cloneElement, useCallback, useEffect, useState } from "react";
 import { addMeMapService } from "@/api/auth";
 import { useAuth } from "@clerk/nextjs";
 import useMediaQuery from "@/hooks/useMediaQuery";
 import Button from "../common/Button";
 import { PlusIcon } from "lucide-react";
+import { getUserProfileService } from "@/api/users";
 
 const AddMeMapModal = ({
   button,
@@ -41,14 +42,25 @@ const AddMeMapModal = ({
   const [loading, setLoading] = useState(false);
   const { getToken } = useAuth();
 
-  const handleLocationChange = (lat: number, lng: number) => {
-    setValue("location.lat", lat);
-    setValue("location.lng", lng);
-    return { lat, lng };
-  };
+  const handleLocationChange = useCallback(
+    (lat: number, lng: number) => {
+      setValue("location.lat", lat);
+      setValue("location.lng", lng);
+      return { lat, lng };
+    },
+    [setValue]
+  );
 
   const onSubmit = async (data: IUserMapRegistration) => {
     try {
+      if (!data.location?.lat || !data.location?.lng) {
+        addToast({
+          title: "Error al registrarte en el mapa",
+          description: "Por favor, selecciona una ubicación en el mapa.",
+          color: "danger",
+        });
+        return;
+      }
       setLoading(true);
 
       const token = await getToken();
@@ -75,6 +87,33 @@ const AddMeMapModal = ({
     }
   };
 
+  const getDefaultValues = useCallback(async () => {
+    const token = await getToken();
+    if (token) {
+      try {
+        const userProfile = await getUserProfileService(token);
+        setValue("description", userProfile.description || "");
+        if (userProfile.location?.coordinates.length === 2) {
+          handleLocationChange(
+            userProfile.location.coordinates[1],
+            userProfile.location.coordinates[0]
+          );
+        }
+        setValue("defaultProfileImage", userProfile.profileImage || "");
+      } catch {
+        addToast({
+          title: "Error al cargar tu perfil",
+          description: "Error al traer tus datos cargados. Intenta nuevamente.",
+          color: "danger",
+        });
+      }
+    }
+  }, [getToken, handleLocationChange, setValue]);
+
+  useEffect(() => {
+    getDefaultValues();
+  }, [getDefaultValues]);
+
   const screenSize = useMediaQuery();
   const modalSize = screenSize.width && screenSize.width < 768 ? "full" : "5xl";
 
@@ -99,7 +138,7 @@ const AddMeMapModal = ({
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Cargate en el mapa del san chulo
+                Sumate al Mapa del San Lucho
               </ModalHeader>
               <ModalBody>
                 <Form
@@ -112,6 +151,7 @@ const AddMeMapModal = ({
                       setValue={setValue}
                       errors={errors}
                       control={control}
+                      defaultImage={getValues("defaultProfileImage")}
                     />
                     <Textarea
                       label="Descripción"
@@ -136,7 +176,11 @@ const AddMeMapModal = ({
                 </Form>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button
+                  variant="light"
+                  className="bg-transparent text-black"
+                  onPress={onClose}
+                >
                   Cerrar
                 </Button>
                 <Button
@@ -146,7 +190,7 @@ const AddMeMapModal = ({
                   isDisabled={loading}
                   form="add-me-map-form"
                 >
-                  Guardar
+                  Sumarme
                 </Button>
               </ModalFooter>
             </>

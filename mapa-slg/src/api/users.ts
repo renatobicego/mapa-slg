@@ -28,3 +28,43 @@ export const getUsersService = async (): Promise<{
     throw error;
   }
 };
+
+export const getUserProfileService = async (
+  token: string
+): Promise<IUserProfile> => {
+  try {
+    const { data } = await axios.get(`${siteConfig.serverUrl}/auth/profile`, {
+      fetchOptions: {
+        cache: "no-cache",
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return {
+      ...data.user,
+      profileImage:
+        data.user.profileImage && (await getFileUrl(data.user.profileImage)),
+    };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const deleteImageService = async (token: string) => {
+  try {
+    const { data } = await axios.delete(
+      `${siteConfig.serverUrl}/auth/profile/image`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

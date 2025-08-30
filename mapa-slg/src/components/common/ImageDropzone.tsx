@@ -1,5 +1,5 @@
 import { IUserMapRegistration } from "@/types/types";
-import { Image } from "@heroui/react";
+import { addToast, Image } from "@heroui/react";
 import { File, Upload, X } from "lucide-react";
 import { useState } from "react";
 import {
@@ -9,19 +9,26 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 import Button from "./Button";
+import { deleteImageService } from "@/api/users";
+import { useAuth } from "@clerk/nextjs";
 
 const ImageDropzone = ({
   setValue,
   errors,
   control,
+  defaultImage,
 }: {
   setValue: UseFormSetValue<IUserMapRegistration>;
   errors: FieldErrors<IUserMapRegistration>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IUserMapRegistration, any, IUserMapRegistration>;
+  defaultImage?: string;
 }) => {
-  const [preview, setPreview] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string>("");
+  const [preview, setPreview] = useState<string | null>(defaultImage || null);
+  const [fileName, setFileName] = useState<string>(
+    defaultImage ? "Imagen actual" : ""
+  );
+  const { getToken } = useAuth();
   const handleFileChange = (files: FileList | null) => {
     if (files && files[0]) {
       const file = files[0];
@@ -37,10 +44,38 @@ const ImageDropzone = ({
     }
   };
 
-  const removeFile = () => {
+  const removeFile = async () => {
+    if (defaultImage && defaultImage === preview) {
+      const shouldRemove = confirm(
+        "¿Estás seguro de que deseas eliminar la imagen actual?"
+      );
+      if (!shouldRemove) return;
+      try {
+        const token = await getToken();
+        await deleteImageService(token || "");
+        addToast({
+          title: "Imagen borrada",
+          description: "La imagen de perfil ha sido borrada.",
+          color: "success",
+        });
+        setValue("defaultProfileImage", "");
+        setValue("profileImage", null);
+        setPreview(null);
+        setFileName("");
+        return;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        addToast({
+          title: "Error al eliminar la imagen",
+          description: error.message,
+          color: "danger",
+        });
+        return;
+      }
+    }
     setValue("profileImage", null);
-    setFileName("");
-    setPreview(null);
+    setFileName(defaultImage ? "Imagen actual" : "");
+    setPreview(defaultImage || null);
   };
   return (
     <div className="space-y-2">
@@ -91,7 +126,7 @@ const ImageDropzone = ({
               />
               <label
                 htmlFor="file-upload"
-                className="cursor-pointer flex flex-col items-center space-y-2 min-h-40 justify-center"
+                className="cursor-pointer flex flex-col items-center space-y-2 min-h-28 md:min-h-40 justify-center"
               >
                 <Upload className="h-8 w-8 text-gray-400" />
                 <span className="text-sm text-gray-600">

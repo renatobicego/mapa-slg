@@ -3,7 +3,7 @@ import AddMeMapModal from "@/components/layout/AddMeMapModal";
 
 export default function Help() {
   return (
-    <main className="min-h-screen text-black pt-8 flex flex-col text-left !items-start justify-start gap-2 pb-20 lg:pt-12 2xl:pt-16 max-w-screen-xl mx-auto">
+    <main className="min-h-screen text-black pt-8 flex flex-col text-left !items-start justify-start gap-2 pb-20 lg:pt-12 2xl:pt-16 max-w-screen-lg mx-auto">
       <h1 className="heading-1">¿Cómo Participar?</h1>
       <p>En 3 simples pasos:</p>
       <ol className="list-decimal pl-5">
