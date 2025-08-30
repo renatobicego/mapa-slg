@@ -18,7 +18,7 @@ import AddMeMap from "./AddMeMap";
 import ImageDropzone from "../common/ImageDropzone";
 import { cloneElement, useCallback, useEffect, useState } from "react";
 import { addMeMapService } from "@/api/auth";
-import { useAuth } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, useAuth } from "@clerk/nextjs";
 import useMediaQuery from "@/hooks/useMediaQuery";
 import Button from "../common/Button";
 import { PlusIcon } from "lucide-react";
@@ -26,8 +26,10 @@ import { getUserProfileService } from "@/api/users";
 
 const AddMeMapModal = ({
   button,
+  onPreviousData,
 }: {
   button?: React.ReactElement<ButtonProps>;
+  onPreviousData?: (prevDataExists: boolean) => void;
 }) => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const {
@@ -40,7 +42,7 @@ const AddMeMapModal = ({
     reset,
   } = useForm<IUserMapRegistration>();
   const [loading, setLoading] = useState(false);
-  const { getToken } = useAuth();
+  const { getToken, isSignedIn } = useAuth();
 
   const handleLocationChange = useCallback(
     (lat: number, lng: number) => {
@@ -98,6 +100,7 @@ const AddMeMapModal = ({
             userProfile.location.coordinates[1],
             userProfile.location.coordinates[0]
           );
+          onPreviousData?.(true);
         }
         setValue("defaultProfileImage", userProfile.profileImage || "");
       } catch {
@@ -108,7 +111,7 @@ const AddMeMapModal = ({
         });
       }
     }
-  }, [getToken, handleLocationChange, setValue]);
+  }, [getToken, handleLocationChange, onPreviousData, setValue]);
 
   useEffect(() => {
     getDefaultValues();
@@ -118,15 +121,39 @@ const AddMeMapModal = ({
   const modalSize = screenSize.width && screenSize.width < 768 ? "full" : "5xl";
 
   const clonedButton = button
-    ? cloneElement(button, { onClick: onOpen })
+    ? cloneElement(
+        button,
+        isSignedIn
+          ? {
+              onClick: () => {
+                console.log("[v0] Modal opening via cloned button");
+                onOpen();
+              },
+            }
+          : {}
+      )
     : null;
   return (
     <>
-      {clonedButton ?? (
-        <Button startContent={<PlusIcon className="size-5" />} onPress={onOpen}>
-          Sumate
-        </Button>
-      )}
+      <SignedIn>
+        {clonedButton ?? (
+          <Button
+            startContent={<PlusIcon className="size-5" />}
+            onPress={onOpen}
+          >
+            Sumate
+          </Button>
+        )}
+      </SignedIn>
+      <SignedOut>
+        <SignInButton>
+          {clonedButton ?? (
+            <Button startContent={<PlusIcon className="size-5" />}>
+              Sumate
+            </Button>
+          )}
+        </SignInButton>
+      </SignedOut>
       <Modal
         placement="center"
         scrollBehavior="inside"

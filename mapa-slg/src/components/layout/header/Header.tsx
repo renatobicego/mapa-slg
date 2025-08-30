@@ -37,23 +37,27 @@ type MenuItem = {
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const { isVisible: isHeroSectionShowed } = useHeroStore();
+  const [prevDataExists, setPrevDataExists] = React.useState(false);
   const { isSignedIn } = useUser();
   const pathname = usePathname();
+
+  const addMeModal = (
+    <AddMeMapModal
+      button={
+        <button className="font-semibold text-black text-large cursor-pointer">
+          {prevDataExists ? "Editar Mi Pin" : "Sumarme al Mapa"}
+        </button>
+      }
+      onPreviousData={setPrevDataExists}
+    />
+  );
 
   const menuItems: MenuItem[] = [
     { label: "Inicio", href: siteConfig.pages.home },
     { label: "Mi Perfil", href: siteConfig.pages.profile, loggedIn: true },
     {
       label: "Sumarme al Mapa",
-      modal: (
-        <AddMeMapModal
-          button={
-            <button className="font-semibold text-black text-large cursor-pointer">
-              Sumarme al Mapa
-            </button>
-          }
-        />
-      ),
+      modal: addMeModal,
       loggedIn: true,
     },
     { label: "Nuestra Historia", href: siteConfig.pages.history },
@@ -64,15 +68,7 @@ const Header = () => {
   const desktopItems: MenuItem[] = [
     {
       label: "Sumarme al Mapa",
-      modal: (
-        <AddMeMapModal
-          button={
-            <button className="font-semibold text-black text-large cursor-pointer">
-              Sumarme al Mapa
-            </button>
-          }
-        />
-      ),
+      modal: addMeModal,
       loggedIn: true,
     },
     { label: "Nuestra Historia", href: siteConfig.pages.history },

@@ -11,6 +11,10 @@
   --color-black: #1d1d1b;
 }
 
+@utility pl-container-xl {
+  padding-left: calc(50% - 640px);
+}
+
 h2 {
   font-family: var(--font-montserrat);
 }
