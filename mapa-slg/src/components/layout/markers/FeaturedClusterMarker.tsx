@@ -33,7 +33,7 @@ export const FeaturesClusterMarker = React.memo(
     clusterId,
     avatars,
     maxAvatarsToShow = 3,
-    minMarkerSize = 48,
+    minMarkerSize = 60,
     sizeMultiplier = 2,
   }: TreeClusterMarkerProps) => {
     const [markerRef, marker] = useAdvancedMarkerRef();
@@ -86,7 +86,7 @@ export const FeaturesClusterMarker = React.memo(
               key={avatar.id}
               src={`${avatar.src ? avatar.src : "/default-avatar.webp"}`}
               alt={avatar.alt || `Avatar ${avatar.id}`}
-              className={`rounded-full  object-cover absolute border-2 ${indexBorderColor(
+              className={`rounded-full bg-white object-cover absolute border-2 ${indexBorderColor(
                 index
               )} p-0.5 hover:scale-105 transition-all duration-200`}
               style={{

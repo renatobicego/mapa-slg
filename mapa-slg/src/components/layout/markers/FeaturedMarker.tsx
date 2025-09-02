@@ -40,7 +40,7 @@ export const FeatureMarker = ({
         key={avatar.id}
         src={`${avatar.src ? avatar.src : "/default-avatar.webp"}`}
         alt={avatar.alt || `Avatar ${avatar.id}`}
-        className="rounded-full  object-cover h-10 w-10 border-2 border-white p-0.5 hover:scale-105 transition-all duration-200 bg-white"
+        className="rounded-full  object-cover h-14 w-14 border-2 border-white p-0.5 hover:scale-105 transition-all duration-200 bg-white"
         removeWrapper
       />
     </AdvancedMarker>

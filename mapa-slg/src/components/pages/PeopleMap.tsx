@@ -93,7 +93,7 @@ const AddMeButton = ({
 
   return (
     <motion.button
-      className="font-semibold absolute bottom-5 right-5 bg-black text-white cursor-pointer w-auto text-small flex gap-1 items-center "
+      className="font-semibold absolute bottom-5 right-5 lg:bottom-8 lg:right-8 bg-black text-white cursor-pointer w-auto text-small lg:text-base 2xl:text-lg flex gap-1 lg:gap-1.5 2xl:gap-2 items-center "
       variants={buttonVariants}
       animate={shouldShowExpanded ? "expanded" : "collapsed"}
       whileHover="hover"
@@ -105,9 +105,9 @@ const AddMeButton = ({
     >
       <motion.div variants={iconVariants} className="flex items-center">
         {prevDataExists && isSignedIn ? (
-          <Edit size={20} />
+          <Edit size={20} className="lg:size-6 2xl:size-7" />
         ) : (
-          <PlusIcon size={20} />
+          <PlusIcon size={20} className="lg:size-6 2xl:size-7" />
         )}
       </motion.div>
 
@@ -134,17 +134,17 @@ const PeopleMap = () => {
     GeoJsonProperties
   > | null>(null);
   const mapRef = React.useRef<google.maps.Map | null>(null);
+  const [shouldFetch, setShouldFetch] = useState(true);
   const [prevDataExists, setPrevDataExists] = useState(false);
 
   useEffect(() => {
-    void getUsersService().then(
-      (data: { users: IUserProfile[]; totalUsers: number }) =>
+    if (!shouldFetch) return;
+    void getUsersService()
+      .then((data: { users: IUserProfile[]; totalUsers: number }) =>
         setUsers(mapUsersToGeojson(data.users))
-    );
-    // void loadCastlesGeojson().then((geojson) => {
-    //   setUsers(geojson);
-    // });
-  }, []);
+      )
+      .finally(() => setShouldFetch(false));
+  }, [shouldFetch]);
 
   const [infowindowData, setInfowindowData] = useState<{
     isLeaf: true;
@@ -202,6 +202,8 @@ const PeopleMap = () => {
       <AddMeMapModal
         button={<AddMeButton prevDataExists={prevDataExists} />}
         onPreviousData={setPrevDataExists}
+        prevDataExists={prevDataExists}
+        setShouldFetch={setShouldFetch}
       />
     </>
   );

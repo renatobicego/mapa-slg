@@ -49,6 +49,7 @@ const Header = () => {
         </button>
       }
       onPreviousData={setPrevDataExists}
+      prevDataExists={prevDataExists}
     />
   );
 

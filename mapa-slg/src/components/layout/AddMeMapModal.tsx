@@ -1,6 +1,7 @@
 "use client";
 
-import { IUserMapRegistration } from "@/types/types";
+import type React from "react";
+import type { IUserMapRegistration } from "@/types/types";
 import {
   useDisclosure,
   Modal,
@@ -11,7 +12,7 @@ import {
   Textarea,
   Form,
   addToast,
-  ButtonProps,
+  type ButtonProps,
 } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import AddMeMap from "./AddMeMap";
@@ -20,16 +21,20 @@ import { cloneElement, useCallback, useEffect, useState } from "react";
 import { addMeMapService } from "@/api/auth";
 import { SignedIn, SignedOut, SignInButton, useAuth } from "@clerk/nextjs";
 import useMediaQuery from "@/hooks/useMediaQuery";
-import Button from "../common/Button";
 import { PlusIcon } from "lucide-react";
 import { getUserProfileService } from "@/api/users";
+import Button from "../common/Button";
 
 const AddMeMapModal = ({
   button,
   onPreviousData,
+  prevDataExists,
+  setShouldFetch,
 }: {
   button?: React.ReactElement<ButtonProps>;
   onPreviousData?: (prevDataExists: boolean) => void;
+  prevDataExists?: boolean;
+  setShouldFetch?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const {
@@ -42,6 +47,7 @@ const AddMeMapModal = ({
     reset,
   } = useForm<IUserMapRegistration>();
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState<1 | 2>(1); // track current step
   const { getToken, isSignedIn } = useAuth();
 
   const handleLocationChange = useCallback(
@@ -68,13 +74,15 @@ const AddMeMapModal = ({
       const token = await getToken();
       if (!token) throw new Error("Usuario no autenticado");
       await addMeMapService(data, token);
+      if (setShouldFetch) setShouldFetch(true);
 
       addToast({
         title: "Te has registrado en el mapa",
-        description: "Ahora podrás ver tu ubicación en el mapa del san chulo.",
+        description: "Ahora podrás ver tu ubicación en el mapa del San Lucho.",
         color: "success",
       });
       reset();
+      setStep(1); // reset step
       onClose();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -126,21 +134,46 @@ const AddMeMapModal = ({
         isSignedIn
           ? {
               onClick: () => {
-                console.log("[v0] Modal opening via cloned button");
+                setStep(1);
                 onOpen();
               },
             }
           : {}
       )
     : null;
+
+  const handleClose = () => {
+    if (step === 2) {
+      const confirmCancel = window.confirm(
+        "¿Estás seguro de que quieres cancelar tu registro?"
+      );
+      if (!confirmCancel) return;
+    }
+    setStep(1);
+    onClose();
+  };
+
+  const handleContinue = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!getValues("location.lat") || !getValues("location.lng")) {
+      addToast({
+        title: "Selecciona una ubicación",
+        description: "Debes elegir un lugar en el mapa antes de continuar.",
+        color: "danger",
+      });
+      return;
+    }
+    setStep(2);
+  };
+
   return (
     <>
       <SignedIn>
         {clonedButton ?? (
-          <Button
-            startContent={<PlusIcon className="size-5" />}
-            onPress={onOpen}
-          >
+          <Button className="flex items-center gap-2">
+            <PlusIcon className="size-5" />
             Sumate
           </Button>
         )}
@@ -148,12 +181,14 @@ const AddMeMapModal = ({
       <SignedOut>
         <SignInButton>
           {clonedButton ?? (
-            <Button startContent={<PlusIcon className="size-5" />}>
+            <Button className="flex items-center gap-2">
+              <PlusIcon className="size-5" />
               Sumate
             </Button>
           )}
         </SignInButton>
       </SignedOut>
+
       <Modal
         placement="center"
         scrollBehavior="inside"
@@ -162,66 +197,70 @@ const AddMeMapModal = ({
         onOpenChange={onOpenChange}
       >
         <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Sumate al Mapa del San Lucho
-              </ModalHeader>
-              <ModalBody>
+          <ModalHeader className="flex flex-col gap-1">
+            {prevDataExists ? "Editar Mi Pin" : "Sumate al Mapa del San Lucho"}
+          </ModalHeader>
+          <ModalBody>
+            <div className="flex lg:flex-row flex-col gap-4 items-stretch">
+              {step === 1 && (
+                <AddMeMap
+                  handleLocationChange={handleLocationChange}
+                  lat={getValues("location.lat")}
+                  lng={getValues("location.lng")}
+                />
+              )}
+
+              {step === 2 && (
                 <Form
                   id="add-me-map-form"
-                  className="flex lg:flex-row flex-col gap-4 items-stretch"
+                  className="flex flex-col gap-4 flex-1"
                   onSubmit={handleSubmit(onSubmit)}
                 >
-                  <div className="flex flex-col gap-4 flex-1 ">
-                    <ImageDropzone
-                      setValue={setValue}
-                      errors={errors}
-                      control={control}
-                      defaultImage={getValues("defaultProfileImage")}
-                    />
-                    <Textarea
-                      label="Descripción"
-                      placeholder="Escribe una breve descripción sobre ti"
-                      {...register("description")}
-                      errorMessage={errors.description?.message}
-                      labelPlacement="outside"
-                      radius="lg"
-                      classNames={{
-                        inputWrapper: "flex-1",
-                      }}
-                      lang="es"
-                      className="flex-1"
-                      isInvalid={!!errors.description}
-                    />
-                  </div>
-                  <AddMeMap
-                    handleLocationChange={handleLocationChange}
-                    lat={getValues("location.lat")}
-                    lng={getValues("location.lng")}
+                  <ImageDropzone
+                    setValue={setValue}
+                    errors={errors}
+                    control={control}
+                    defaultImage={getValues("defaultProfileImage")}
+                  />
+                  <Textarea
+                    label="Descripción"
+                    placeholder="Escribe una breve descripción sobre ti"
+                    {...register("description")}
+                    errorMessage={errors.description?.message}
+                    labelPlacement="outside"
+                    radius="lg"
+                    classNames={{ inputWrapper: "flex-1" }}
+                    lang="es"
+                    className="flex-1"
+                    isInvalid={!!errors.description}
                   />
                 </Form>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  variant="light"
-                  className="bg-transparent text-black"
-                  onPress={onClose}
-                >
-                  Cerrar
-                </Button>
-                <Button
-                  color="primary"
-                  type="submit"
-                  isLoading={loading}
-                  isDisabled={loading}
-                  form="add-me-map-form"
-                >
-                  Sumarme
-                </Button>
-              </ModalFooter>
-            </>
-          )}
+              )}
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button className="text-black bg-transparent" onPress={handleClose}>
+              Cerrar
+            </Button>
+
+            {step === 1 ? (
+              <Button onClick={handleContinue}>Continuar</Button>
+            ) : (
+              <Button
+                type="submit"
+                disabled={loading}
+                isDisabled={loading}
+                isLoading={loading}
+                form="add-me-map-form"
+              >
+                {loading
+                  ? "Cargando..."
+                  : prevDataExists
+                  ? "Actualizar"
+                  : "Sumarme"}
+              </Button>
+            )}
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

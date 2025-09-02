@@ -1,7 +1,13 @@
 "use client";
+import Button from "@/components/common/Button";
 import AddMeMapModal from "@/components/layout/AddMeMapModal";
+import { useAuth } from "@clerk/nextjs";
+import { Edit, PlusIcon } from "lucide-react";
+import { useState } from "react";
 
 export default function Help() {
+  const [prevDataExists, setPrevDataExists] = useState(false);
+  const { isSignedIn } = useAuth();
   return (
     <main className="min-h-screen text-black pt-8 flex flex-col text-left !items-start justify-start gap-2 pb-20 lg:pt-12 2xl:pt-16 max-w-screen-lg mx-auto">
       <h1 className="heading-1">¿Cómo Participar?</h1>
@@ -36,7 +42,24 @@ export default function Help() {
           <b>Familias</b> - Parte fundamental de nuestra comunidad
         </li>
       </ol>
-      <AddMeMapModal />
+      <AddMeMapModal
+        prevDataExists={prevDataExists}
+        button={
+          <Button
+            startContent={
+              prevDataExists && isSignedIn ? (
+                <Edit size={20} />
+              ) : (
+                <PlusIcon size={20} />
+              )
+            }
+            className="font-semibold bg-black text-white cursor-pointer w-auto text-small flex gap-1 items-center "
+          >
+            {prevDataExists && isSignedIn ? "Editar Mi Pin" : "Sumarme"}
+          </Button>
+        }
+        onPreviousData={setPrevDataExists}
+      />
     </main>
   );
 }

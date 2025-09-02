@@ -50,6 +50,9 @@ const LatLngAutocomplete = ({
       labelPlacement="outside"
       listboxProps={{
         emptyContent: "No se encontraron resultados",
+        classNames: {
+          emptyContent: "text-small",
+        },
       }}
       radius="lg"
       lang="es"
@@ -58,6 +61,9 @@ const LatLngAutocomplete = ({
       onSelectionChange={(key) => handleSelectPlace(key as string)}
       isLoading={isPlacePredictionsLoading}
       className={className}
+      popoverProps={{
+        placement: "bottom",
+      }}
     >
       {placePredictions.map(
         (place: { place_id: string; description: string }) => (
