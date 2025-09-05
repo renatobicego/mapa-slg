@@ -10,9 +10,15 @@ interface AddMeMapProps {
     lat: number,
     lng: number
   ) => { lat: number; lng: number };
+  defaultCoords?: { lat: number; lng: number } | null;
 }
 
-const AddMeMap = ({ lat, lng, handleLocationChange }: AddMeMapProps) => {
+const AddMeMap = ({
+  lat,
+  lng,
+  handleLocationChange,
+  defaultCoords,
+}: AddMeMapProps) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [marker, setMarker] =
     useState<google.maps.marker.AdvancedMarkerElement | null>(null);
@@ -25,7 +31,10 @@ const AddMeMap = ({ lat, lng, handleLocationChange }: AddMeMapProps) => {
   useEffect(() => {
     if (!ref.current || map || !window.google?.maps) return;
     const initializedMap = new google.maps.Map(ref.current, {
-      center: { lat: -32.8941303, lng: -68.8419201 },
+      center: {
+        lat: defaultCoords ? defaultCoords.lat : -32.8941303,
+        lng: defaultCoords ? defaultCoords.lng : -68.8419201,
+      },
       zoom: 14,
       disableDefaultUI: true, // disable default controls
       zoomControl: false, // optionally enable zoom
@@ -37,7 +46,7 @@ const AddMeMap = ({ lat, lng, handleLocationChange }: AddMeMapProps) => {
       mapId: "google-maps-" + id,
     });
     setMap(initializedMap);
-  }, [map, lat, lng, id]);
+  }, [map, lat, lng, id, defaultCoords]);
 
   // Map click listener
   useEffect(() => {

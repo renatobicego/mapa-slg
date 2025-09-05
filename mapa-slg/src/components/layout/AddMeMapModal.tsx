@@ -49,6 +49,10 @@ const AddMeMapModal = ({
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<1 | 2>(1); // track current step
   const { getToken, isSignedIn } = useAuth();
+  const [defaultCoords, setDefaultCoords] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   const handleLocationChange = useCallback(
     (lat: number, lng: number) => {
@@ -108,6 +112,10 @@ const AddMeMapModal = ({
             userProfile.location.coordinates[1],
             userProfile.location.coordinates[0]
           );
+          setDefaultCoords({
+            lat: userProfile.location.coordinates[1],
+            lng: userProfile.location.coordinates[0],
+          });
           onPreviousData?.(true);
         }
         setValue("defaultProfileImage", userProfile.profileImage || "");
@@ -207,6 +215,7 @@ const AddMeMapModal = ({
                   handleLocationChange={handleLocationChange}
                   lat={getValues("location.lat")}
                   lng={getValues("location.lng")}
+                  defaultCoords={defaultCoords}
                 />
               )}
 
