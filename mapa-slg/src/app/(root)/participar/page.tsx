@@ -14,13 +14,21 @@ export default function Help() {
       <p>En 3 simples pasos:</p>
       <ol className="list-decimal pl-5">
         <li>
-          <b>Registrate</b> - Crea tu cuenta con tu email.
+          <b>+ Sumarme</b> - Tocá el botón de abajo que dice &quot;+
+          Sumarme&quot;.
         </li>
         <li>
           <b>Ubicate</b> - Coloca tu pin en el mapa donde te encuentres.
         </li>
         <li>
+          <b>Descripción</b> - Agregá algo que quieras contar sobre vos.
+        </li>
+        <li>
           <b>Compartí</b> - Invita a otros compañeros a sumarse.
+        </li>
+        <li>
+          <b>Eidtar mi Pin</b> - Si ya cargaste tu pin, podés editarlo tocando
+          &quot;Editar Mi Pin&quot;.
         </li>
       </ol>
       <h2 className="heading-2 mt-8">¿Quiénes pueden participar?</h2>

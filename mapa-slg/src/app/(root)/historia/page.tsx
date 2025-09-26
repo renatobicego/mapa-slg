@@ -33,7 +33,7 @@ export default function HistoryPage() {
           <h1 className="heading-1">Nuestra Historia</h1>
           <p>
             Nuestro Colegio San Luis Gonzaga es heredero de una rica tradición
-            que comenzó mucho antes de 1925. Aquí te contamos los hitos más
+            que comenzó mucho antes de 1926. Aquí te contamos los hitos más
             importantes de nuestra historia.
           </p>
         </div>
@@ -49,15 +49,15 @@ export default function HistoryPage() {
           <ul className="mt-4 list-disc pl-5">
             <li>
               1609: Los jesuitas abren el &quot;Colegio de la Inmaculada&quot;,
-              la primera escuela de Mendoza.
+              la primera escuela jesuita de Mendoza.
             </li>
             <li>1616: Se inician clases de segunda enseñanza.</li>
             <li>
-              1757: El colegio solicita al Rey de España convertirse en
+              1757: El Colegio solicita al Rey de España convertirse en
               Universidad (rechazado).
             </li>
             <li>
-              1767: Expulsión de los jesuitas de América - cierre del colegio.
+              1767: Expulsión de los jesuitas de América - cierre del Colegio.
             </li>
           </ul>
         </div>
@@ -83,7 +83,7 @@ export default function HistoryPage() {
               1926: Nace nuestro San Luis Gonzaga - inicio de la escuela
               primaria.
             </li>
-            <li>1944: Comienza el colegio secundario (Bachillerato).</li>
+            <li>1944: Comienza el Colegio secundario (Bachillerato).</li>
           </ul>
         </div>
         <Image
@@ -105,11 +105,7 @@ export default function HistoryPage() {
               1972: Se crea la Asociación Civil - padres y madres asumen la
               gestión.
             </li>
-            <li>1997: El colegio se hace mixto.</li>
-            <li>
-              2001: Implementación del Polimodal con orientaciones
-              especializadas.
-            </li>
+            <li>1997: El Colegio se hace mixto.</li>
             <li>
               2009: Reestructuración con conducción colegiada (400 años después
               de la primera fundación).
@@ -121,14 +117,14 @@ export default function HistoryPage() {
         </div>
         <div className="flex flex-col items-start justify-start gap-2">
           <h4 className="heading-2">
-            Patrón de la Juventud Católica (1568-1591)
+            San Luis Gonzaga: Patrón de la Juventud Católica (1568-1591)
           </h4>
           <p>
-            Joven jesuita que dedicó su vida al servicio de los más necesitados.
-            Durante una epidemia en Roma, cuidó a los enfermos hasta contraer la
-            enfermedad que le causó la muerte a los 23 años. Su compasión,
-            compromiso, libertad interior y espíritu de servicio son el ejemplo
-            que nos inspira cada día.
+            * Luigi Gonzaga fue un joven jesuita que dedicó su vida al servicio
+            de los más necesitados. Durante una epidemia en Roma, cuidó a los
+            enfermos hasta contraer la enfermedad que le causó la muerte a los
+            23 años. Su compasión, compromiso, libertad interior y espíritu de
+            servicio son el ejemplo que nos inspira cada día.
           </p>
         </div>
       </section>
