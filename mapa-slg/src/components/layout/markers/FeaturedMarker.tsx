@@ -35,12 +35,13 @@ export const FeatureMarker = ({
       position={position}
       onClick={handleClick}
       anchorPoint={AdvancedMarkerAnchorPoint.CENTER}
+      className="select-none"
     >
       <Image
         key={avatar.id}
         src={`${avatar.src ? avatar.src : "/default-avatar.webp"}`}
         alt={avatar.alt || `Avatar ${avatar.id}`}
-        className="rounded-full  object-cover h-14 w-14 border-2 border-white p-0.5 hover:scale-105 transition-all duration-200 bg-white"
+        className="rounded-full  object-cover h-14 w-14 border-2 border-white p-0.5 hover:scale-105 transition-all duration-200 bg-white select-none"
         removeWrapper
       />
     </AdvancedMarker>

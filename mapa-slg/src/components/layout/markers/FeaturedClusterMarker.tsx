@@ -79,8 +79,9 @@ export const FeaturesClusterMarker = React.memo(
         onClick={handleClick}
         style={{ width: markerSize, height: markerSize, overflow: "visible" }}
         anchorPoint={AdvancedMarkerAnchorPoint.CENTER}
+        className="select-none"
       >
-        <div className="flex relative items-center justify-center overflow-visible">
+        <div className="flex relative items-center justify-center overflow-visible select-none">
           {displayAvatars.map((avatar, index) => (
             <Image
               key={avatar.id}
