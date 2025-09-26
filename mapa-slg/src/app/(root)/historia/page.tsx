@@ -120,8 +120,8 @@ export default function HistoryPage() {
             San Luis Gonzaga: Patrón de la Juventud Católica (1568-1591)
           </h4>
           <p>
-            * Luigi Gonzaga fue un joven jesuita que dedicó su vida al servicio
-            de los más necesitados. Durante una epidemia en Roma, cuidó a los
+            Luigi Gonzaga fue un joven jesuita que dedicó su vida al servicio de
+            los más necesitados. Durante una epidemia en Roma, cuidó a los
             enfermos hasta contraer la enfermedad que le causó la muerte a los
             23 años. Su compasión, compromiso, libertad interior y espíritu de
             servicio son el ejemplo que nos inspira cada día.
