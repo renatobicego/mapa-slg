@@ -23,6 +23,7 @@ import {
   UserButton,
   useUser,
 } from "@clerk/nextjs";
+import HelpModal from "../HelpModal";
 
 type MenuItem = {
   label: string;
@@ -62,7 +63,7 @@ const Header = () => {
       loggedIn: true,
     },
     { label: "Nuestra Historia", href: siteConfig.pages.history },
-    { label: "¿Cómo Participar?", href: siteConfig.pages.help },
+    { label: "¿Cómo Participar?", modal: <HelpModal /> },
     { label: "Cerrar Sesión", signOut: true },
   ];
 
@@ -73,7 +74,7 @@ const Header = () => {
       loggedIn: true,
     },
     { label: "Nuestra Historia", href: siteConfig.pages.history },
-    { label: "¿Cómo Participar?", href: siteConfig.pages.help },
+    { label: "¿Cómo Participar?", modal: <HelpModal /> },
     {
       label: "Mi Perfil",
       component: (
@@ -232,7 +233,7 @@ const Header = () => {
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             className="lg:hidden bg-black text-white h-9 w-9 rounded-full 
                        [&>span]:before:h-[1.3px] [&>span]:after:h-[1.3px] 
-                       [&>span]:before:w-[17px] [&>span]:after:w-[17px]"
+                       [&>span]:before:w-[17px] [&>span]:after:w-[17px] cursor-pointer"
           />
         </NavbarItem>
       </NavbarContent>

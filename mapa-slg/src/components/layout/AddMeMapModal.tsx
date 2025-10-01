@@ -17,7 +17,7 @@ import {
 import { useForm } from "react-hook-form";
 import AddMeMap from "./AddMeMap";
 import ImageDropzone from "../common/ImageDropzone";
-import { cloneElement, useCallback, useEffect, useState } from "react";
+import { cloneElement, useCallback, useEffect, useMemo, useState } from "react";
 import { addMeMapService } from "@/api/auth";
 import { SignedIn, SignedOut, SignInButton, useAuth } from "@clerk/nextjs";
 import useMediaQuery from "@/hooks/useMediaQuery";
@@ -176,6 +176,7 @@ const AddMeMapModal = ({
     setStep(2);
   };
 
+  const index = useMemo(() => Math.floor(Math.random() * 3), []);
   return (
     <>
       <SignedIn>
@@ -216,6 +217,8 @@ const AddMeMapModal = ({
                   lat={getValues("location.lat")}
                   lng={getValues("location.lng")}
                   defaultCoords={defaultCoords}
+                  image={getValues("defaultProfileImage")}
+                  index={index}
                 />
               )}
 

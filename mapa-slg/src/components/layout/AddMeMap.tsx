@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, memo, useMemo } from "react";
+import { useState, useEffect, useRef, memo, useMemo, useCallback } from "react";
 import LatLngAutocomplete from "../common/LatLngAutocomplete";
 
 interface AddMeMapProps {
@@ -11,6 +11,8 @@ interface AddMeMapProps {
     lng: number
   ) => { lat: number; lng: number };
   defaultCoords?: { lat: number; lng: number } | null;
+  image?: string;
+  index: number;
 }
 
 const AddMeMap = ({
@@ -18,6 +20,8 @@ const AddMeMap = ({
   lng,
   handleLocationChange,
   defaultCoords,
+  image,
+  index,
 }: AddMeMapProps) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [marker, setMarker] =
@@ -48,6 +52,11 @@ const AddMeMap = ({
     setMap(initializedMap);
   }, [map, lat, lng, id, defaultCoords]);
 
+  const getRandomIcon = useCallback(() => {
+    const icons = ["/heart.png", "/book.png", "/pen.png"];
+    return icons[index % icons.length];
+  }, [index]);
+
   // Map click listener
   useEffect(() => {
     if (map) {
@@ -72,9 +81,72 @@ const AddMeMap = ({
     if (marker) marker.remove();
 
     if (!markerPosition.lat || !markerPosition.lng) return;
+    // Create custom marker content with avatar styling
+    const markerContent = document.createElement("div");
+    markerContent.className = "custom-marker";
+    markerContent.innerHTML = `
+      <div class="marker-container">
+         <img
+          src="${image ? image : getRandomIcon()}"
+          alt="User Avatar"
+          class="marker-avatar"
+        />
+        <div class="marker-tip"></div>
+      </div>
+      <style>
+        .marker-container {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .custom-marker {
+          cursor: pointer;
+          transition: transform 0.2s;
+        }
+        .custom-marker:hover {
+          transform: scale(1.05);
+        }
+        .marker-avatar {
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid #3b82f6;
+          padding: 2px;
+          background: white;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          position: relative;
+          z-index: 2;
+        }
+        .marker-tip {
+          width: 0;
+          height: 0;
+          border-left: 10px solid transparent;
+          border-right: 10px solid transparent;
+          border-top: 16px solid #3b82f6;
+          position: relative;
+          top: -2px;
+          z-index: 1;
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+        .marker-tip::before {
+          content: '';
+          position: absolute;
+          width: 0;
+          height: 0;
+          border-left: 8px solid transparent;
+          border-right: 8px solid transparent;
+          border-top: 14px solid white;
+          left: -8px;
+          top: -16px;
+        }
+      </style>
+    `;
     const newMarker = new google.maps.marker.AdvancedMarkerElement({
       position: markerPosition,
       map: map!,
+      content: markerContent,
       gmpDraggable: false,
     });
     handleLocationChange(markerPosition.lat, markerPosition.lng);

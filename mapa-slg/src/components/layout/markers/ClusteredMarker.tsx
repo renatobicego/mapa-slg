@@ -62,7 +62,7 @@ export const ClusteredMarkers = ({
 
   return (
     <>
-      {clusters.map((feature) => {
+      {clusters.map((feature, index) => {
         const [lng, lat] = feature.geometry.coordinates;
 
         const clusterProperties = feature.properties as ClusterProperties;
@@ -76,9 +76,10 @@ export const ClusteredMarkers = ({
             avatars={getClusterAvatars(clusterProperties.cluster_id, 3).map(
               (leaf) => ({
                 id: leaf.id as string,
-                src: leaf.properties?.profileImage as string,
+                src: leaf.properties?.profileImage,
               })
             )}
+            index={index}
             size={clusterProperties.point_count}
             sizeAsText={String(clusterProperties.point_count_abbreviated)}
             onMarkerClick={handleClusterClick}
@@ -88,9 +89,10 @@ export const ClusteredMarkers = ({
             key={feature.id}
             featureId={feature.id as string}
             position={{ lat, lng }}
+            index={index}
             avatar={{
               id: leafProperties.id as string,
-              src: leafProperties.properties?.profileImage as string,
+              src: leafProperties.properties?.profileImage,
             }}
             onMarkerClick={handleMarkerClick}
           />

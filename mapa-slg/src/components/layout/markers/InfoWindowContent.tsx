@@ -70,7 +70,8 @@ export const InfoWindowContent = memo(
         className="p-0"
         placement="center"
         classNames={{
-          closeButton: "z-50 bg-black text-white",
+          closeButton:
+            "z-50 bg-black text-white hover:bg-black/80 cursor-pointer",
         }}
       >
         <ModalContent className="p-0 ">

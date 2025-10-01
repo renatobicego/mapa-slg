@@ -22,6 +22,7 @@ type TreeClusterMarkerProps = {
   maxAvatarsToShow?: number;
   minMarkerSize?: number;
   sizeMultiplier?: number;
+  index: number;
 };
 
 export const FeaturesClusterMarker = React.memo(
@@ -35,6 +36,7 @@ export const FeaturesClusterMarker = React.memo(
     maxAvatarsToShow = 3,
     minMarkerSize = 60,
     sizeMultiplier = 2,
+    index,
   }: TreeClusterMarkerProps) => {
     const [markerRef, marker] = useAdvancedMarkerRef();
 
@@ -71,6 +73,14 @@ export const FeaturesClusterMarker = React.memo(
       return colors[index];
     }, []);
 
+    const getRandomIcon = useCallback(
+      (addIndex: number) => {
+        const icons = ["/heart.png", "/book.png", "/pen.png"];
+        return icons[(index + addIndex) % icons.length];
+      },
+      [index]
+    );
+
     return (
       <AdvancedMarker
         ref={markerRef}
@@ -85,7 +95,7 @@ export const FeaturesClusterMarker = React.memo(
           {displayAvatars.map((avatar, index) => (
             <Image
               key={avatar.id}
-              src={`${avatar.src ? avatar.src : "/default-avatar.webp"}`}
+              src={`${avatar.src ? avatar.src : getRandomIcon(index)}`}
               alt={avatar.alt || `Avatar ${avatar.id}`}
               className={`rounded-full bg-white object-cover absolute border-2 ${indexBorderColor(
                 index
