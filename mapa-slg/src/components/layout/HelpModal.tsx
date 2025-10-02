@@ -7,6 +7,7 @@ import {
   Button,
   useDisclosure,
   ModalHeader,
+  ModalFooter,
 } from "@heroui/react";
 import React, { cloneElement, useState } from "react";
 import AddMeMapModal from "./AddMeMapModal";
@@ -100,6 +101,8 @@ const HelpModal = ({
                 <b>Familias</b> - Parte fundamental de nuestra comunidad
               </li>
             </ol>
+          </ModalBody>
+          <ModalFooter>
             <AddMeMapModal
               prevDataExists={prevDataExists}
               button={
@@ -118,7 +121,7 @@ const HelpModal = ({
               }
               onPreviousData={setPrevDataExists}
             />
-          </ModalBody>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>
