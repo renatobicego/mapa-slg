@@ -1,3 +1,10 @@
+export type RoleEnum =
+  | "exstudent"
+  | "teacher"
+  | "employee"
+  | "student"
+  | "familia";
+
 export interface IUser {
   name: string;
   email: string;
@@ -5,7 +12,7 @@ export interface IUser {
   phone?: string;
   profileImage?: string;
   description?: string;
-  role: "exstudent" | "teacher" | "employee";
+  role: RoleEnum[];
   location?: {
     type: "Point";
     coordinates: [number, number]; // [longitude, latitude]
@@ -30,7 +37,7 @@ export interface IUserRegistration {
   phone?: string;
   description?: string;
   profileImage?: string;
-  role: "exstudent" | "teacher" | "employee" | "student";
+  role: RoleEnum[];
   graduationYear?: number;
   workStartYear?: number;
   workEndYear?: number;

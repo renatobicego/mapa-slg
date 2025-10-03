@@ -1,5 +1,6 @@
 import { body, validationResult } from "express-validator";
 import { Request, Response, NextFunction } from "express";
+import { hasRole } from "../utils/utils";
 
 export const validateRegistration = [
   body("phone")
@@ -11,13 +12,21 @@ export const validateRegistration = [
 
   // Student-specific validation
   body("graduationYear")
-    .if(body("role").equals("exstudent"))
+    .if(
+      (value, { req }) =>
+        Array.isArray(req.body.role) && hasRole(req.body.role, "student")
+    )
     .isInt({ min: 1900, max: new Date().getFullYear() + 10 })
     .withMessage("Ingrese un año válido"),
 
   // Teacher/Employee-specific validation
   body("workStartYear")
-    .if(body("role").isIn(["teacher", "employee"]))
+    .if(
+      (value, { req }) =>
+        Array.isArray(req.body.role) &&
+        (hasRole(req.body.role, "teacher") ||
+          hasRole(req.body.role, "employee"))
+    )
     .isInt({ min: 1900, max: new Date().getFullYear() })
     .withMessage("Ingrese un año válido"),
 

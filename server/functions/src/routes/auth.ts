@@ -19,6 +19,7 @@ import { Document } from "mongoose";
 import { deleteFile } from "../utils/firebase/deleteFile.js";
 import { clerkClient, getAuth, requireAuth } from "@clerk/express";
 import { log } from "firebase-functions/logger";
+import { hasRole } from "../utils/utils.js";
 
 const router = express.Router();
 
@@ -52,9 +53,12 @@ router.post(
       };
 
       // Add role-specific fields
-      if (userData.role === "exstudent") {
+      if (hasRole(userData.role, "student")) {
         userToCreate.graduationYear = userData.graduationYear;
-      } else if (userData.role === "teacher" || userData.role === "employee") {
+      } else if (
+        hasRole(userData.role, "teacher") ||
+        hasRole(userData.role, "employee")
+      ) {
         userToCreate.workStartYear = userData.workStartYear;
         userToCreate.workEndYear = userData.workEndYear;
         userToCreate.isCurrentlyWorking = userData.isCurrentlyWorking ?? true;

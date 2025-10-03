@@ -128,16 +128,18 @@ const RegisterForm = () => {
               rules={{ required: "El rol es requerido" }}
               render={({ field }) => (
                 <Select
-                  onChange={field.onChange}
-                  value={field.value}
+                  {...field}
+                  selectedKeys={new Set(field.value ?? [])}
+                  onSelectionChange={(keys) => field.onChange(Array.from(keys))}
                   label="¿Cuál es tu relación con la escuela?"
                   placeholder="Selecciona tu relación"
                   description="Puede ser relación actual o pasada"
                   labelPlacement="outside"
                   radius="lg"
+                  selectionMode="multiple"
                   errorMessage={errors.role?.message}
                   className="flex-1"
-                  isInvalid={errors.role ? true : false}
+                  isInvalid={!!errors.role}
                 >
                   <SelectItem key="student">Alumno</SelectItem>
                   <SelectItem key="exstudent">Ex-Alumno</SelectItem>
@@ -148,14 +150,14 @@ const RegisterForm = () => {
             />
 
             {/* Conditional Fields Based on Role */}
-            {selectedRole === "exstudent" && (
+            {selectedRole.includes("exstudent") && (
               <Input
                 id="graduationYear"
                 type="number"
                 {...register("graduationYear", {
                   validate: (value) => {
                     if (!selectedRole) return true;
-                    return selectedRole === "exstudent" && !value
+                    return selectedRole.includes("exstudent") && !value
                       ? "El año de egreso es obligatorio para ex-alumnos"
                       : true;
                   },
@@ -178,7 +180,8 @@ const RegisterForm = () => {
               />
             )}
 
-            {(selectedRole === "teacher" || selectedRole === "employee") && (
+            {(selectedRole.includes("teacher") ||
+              selectedRole.includes("employee")) && (
               <div className="flex flex-col gap-4 items-start w-full">
                 <Controller
                   name="isCurrentlyWorking"

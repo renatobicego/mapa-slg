@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { IUser } from "../types/index.js";
+import { hasRole } from "../utils/utils.js";
 
 export interface IUserDocument extends IUser, Document {
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -42,7 +43,7 @@ const UserSchema = new Schema<IUserDocument>(
       trim: true,
     },
     role: {
-      type: String,
+      type: [String],
       required: [true, "El rol es obligatorio"],
       enum: {
         values: ["exstudent", "teacher", "employee", "student"],
@@ -78,7 +79,7 @@ const UserSchema = new Schema<IUserDocument>(
     graduationYear: {
       type: Number,
       required: function (this: IUserDocument) {
-        return this.role === "exstudent";
+        return Boolean(hasRole(this.role, "exstudent"));
       },
       min: [1900, "Ingrese un año válido"],
       max: [new Date().getFullYear(), "Ingrese un año válido"],
@@ -88,7 +89,9 @@ const UserSchema = new Schema<IUserDocument>(
     workStartYear: {
       type: Number,
       required: function (this: IUserDocument) {
-        return this.role === "teacher" || this.role === "employee";
+        return Boolean(
+          hasRole(this.role, "teacher") || hasRole(this.role, "employee")
+        );
       },
       min: [1900, "Ingrese un año válido"],
       max: [new Date().getFullYear(), "Ingrese un año válido"],
@@ -112,7 +115,9 @@ const UserSchema = new Schema<IUserDocument>(
     isCurrentlyWorking: {
       type: Boolean,
       default: function (this: IUserDocument) {
-        return this.role === "teacher" || this.role === "employee";
+        return this.role.find(
+          (role) => role === "teacher" || role === "employee"
+        );
       },
     },
   },
@@ -133,7 +138,7 @@ UserSchema.index({ location: "2dsphere" }, { sparse: true });
 
 // Validation for role-specific fields
 UserSchema.pre("validate", function (next) {
-  if (this.role === "exstudent" && !this.graduationYear) {
+  if (Boolean(hasRole(this.role, "exstudent")) && !this.graduationYear) {
     this.invalidate(
       "graduationYear",
       "El año de egreso es obligatorio para ex-alumnos"
@@ -141,8 +146,8 @@ UserSchema.pre("validate", function (next) {
   }
 
   if (
-    (this.role === "teacher" || this.role === "employee") &&
-    !this.workStartYear
+    hasRole(this.role, "teacher") ||
+    (hasRole(this.role, "employee") && !this.workStartYear)
   ) {
     this.invalidate(
       "workStartYear",

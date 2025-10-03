@@ -15,6 +15,7 @@ import { useHeroStore } from "@/stores/useHeroStore";
 import { Edit, PlusIcon } from "lucide-react";
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { useAuth } from "@clerk/nextjs";
+import FilterButton from "../layout/FilterButton";
 // import { loadCastlesGeojson } from "@/utils/castle";
 
 const AddMeButton = ({
@@ -93,7 +94,7 @@ const AddMeButton = ({
 
   return (
     <motion.button
-      className="font-semibold absolute bottom-5 right-5 lg:bottom-8 lg:right-8 bg-black text-white cursor-pointer w-auto text-small lg:text-base 2xl:text-lg flex gap-1 lg:gap-1.5 2xl:gap-2 items-center "
+      className="font-semibold bg-black text-white cursor-pointer w-auto text-small lg:text-base 2xl:text-lg flex gap-1 lg:gap-1.5 2xl:gap-2 items-center "
       variants={buttonVariants}
       animate={shouldShowExpanded ? "expanded" : "collapsed"}
       whileHover="hover"
@@ -199,12 +200,15 @@ const PeopleMap = () => {
           onOpenChange={onOpenChange}
         />
       </Map>
-      <AddMeMapModal
-        button={<AddMeButton prevDataExists={prevDataExists} />}
-        onPreviousData={setPrevDataExists}
-        prevDataExists={prevDataExists}
-        setShouldFetch={setShouldFetch}
-      />
+      <menu className="absolute bottom-5 right-5 lg:bottom-8 lg:right-8 flex gap-2 items-center">
+        <FilterButton />
+        <AddMeMapModal
+          button={<AddMeButton prevDataExists={prevDataExists} />}
+          onPreviousData={setPrevDataExists}
+          prevDataExists={prevDataExists}
+          setShouldFetch={setShouldFetch}
+        />
+      </menu>
     </>
   );
 };

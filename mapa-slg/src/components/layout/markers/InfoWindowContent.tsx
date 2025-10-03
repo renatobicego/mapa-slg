@@ -1,12 +1,12 @@
 import React, { memo } from "react";
 import { IUserProfile } from "@/types/types";
 import {
+  Chip,
   Image,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
-  ScrollShadow,
 } from "@heroui/react";
 import useMediaQuery from "@/hooks/useMediaQuery";
 
@@ -25,41 +25,70 @@ export const InfoWindowContent = memo(
     const { name, profileImage, description } = user || {};
     const screenSize = useMediaQuery();
     const modalSize = screenSize.width && screenSize.width < 768 ? "5xl" : "xl";
-    const getRoleLabel = () => {
-      const role = user?.role;
+    const getRoleLabels = () => {
+      if (!user || !Array.isArray(user.role)) {
+        return [{ role: "community", label: "Miembro de la Comunidad" }];
+      }
+
+      return user.role.map((role) => {
+        switch (role) {
+          case "student":
+            return { role, label: "Alumno/a" };
+          case "familia":
+            return { role, label: "Familia" };
+
+          case "exstudent": {
+            const year =
+              "graduationYear" in user && user.graduationYear
+                ? ` - Promoción ${user.graduationYear}`
+                : "";
+            return { role, label: `Ex Alumno/a${year}` };
+          }
+
+          case "teacher": {
+            const workYears =
+              "workStartYear" in user && user.workStartYear
+                ? user.isCurrentlyWorking
+                  ? ` - Desde ${user.workStartYear}`
+                  : user.workEndYear
+                  ? ` - Desde ${user.workStartYear} a ${user.workEndYear}`
+                  : ` - Desde ${user.workStartYear}`
+                : "";
+            return { role, label: `Docente${workYears}` };
+          }
+
+          case "employee": {
+            const workYears2 =
+              "workStartYear" in user && user.workStartYear
+                ? user.isCurrentlyWorking
+                  ? ` - Desde ${user.workStartYear}`
+                  : user.workEndYear
+                  ? ` - Desde ${user.workStartYear} a ${user.workEndYear}`
+                  : ` - Desde ${user.workStartYear}`
+                : "";
+            return { role, label: `Personal No Docente${workYears2}` };
+          }
+
+          default:
+            return { role: "community", label: "Miembro de la Comunidad" };
+        }
+      });
+    };
+
+    const getColorByRole = (role: string) => {
       switch (role) {
         case "student":
-          return "Alumno/a";
+          return "text-red border-red/80";
         case "exstudent":
-          const year =
-            user && "graduationYear" in user
-              ? ` - Promoción ${user.graduationYear}`
-              : "";
-          return `Ex Alumno/a${year}`;
-
+          return "text-dark-blue border-dark-blue/80";
         case "teacher":
-          const workYears =
-            user && "workStartYear" in user
-              ? user.isCurrentlyWorking
-                ? ` - Desde ${user.workStartYear}`
-                : user.workEndYear
-                ? ` - Desde ${user.workStartYear} a ${user.workEndYear}`
-                : ` - Desde ${user.workStartYear}`
-              : "";
-          return `Docente${workYears}`;
+          return "text-light-blue border-light-blue/80";
         case "employee":
-          const workYears2 =
-            user && "workStartYear" in user
-              ? user.isCurrentlyWorking
-                ? ` - Desde ${user.workStartYear}`
-                : user.workEndYear
-                ? ` - Desde ${user.workStartYear} a ${user.workEndYear}`
-                : ` - Desde ${user.workStartYear}`
-              : "";
-
-          return `Personal No Docente${workYears2}`;
+          return "text-green border-green/80";
+        case "familia":
+          return "text-yellow border-yellow/80";
         default:
-          return "Miembro de la Comunidad";
+          return "text-black border-black/80";
       }
     };
     return (
@@ -83,12 +112,19 @@ export const InfoWindowContent = memo(
               removeWrapper
             />
           </ModalBody>
-          <ModalFooter className="flex-col">
+          <ModalFooter className="flex-col max-h-[30dvh] overflow-y-auto">
             <h3 className="heading-4 sticky top-0 left-0 mb-1">{name}</h3>
-            <h4>{getRoleLabel()}</h4>
-            <ScrollShadow size={16} className="w-full min-h-8 max-h-32">
-              <p className="!text-small">{description}</p>
-            </ScrollShadow>
+            {getRoleLabels().map((role, index) => (
+              <Chip
+                size="sm"
+                variant="dot"
+                className={`${getColorByRole(role.role)}`}
+                key={index}
+              >
+                {role.label}
+              </Chip>
+            ))}
+            <p className="!text-small">{description}</p>
           </ModalFooter>
         </ModalContent>
       </Modal>

@@ -39,8 +39,8 @@ export default function HistoryPage() {
         </div>
         <Image
           ref={section1Ref}
-          alt="Imagen 1"
-          src="/image1.jpeg"
+          alt="Alumnos del Colegio San Luis Gonzaga"
+          src="/alumnos.jpg"
           className="w-full"
           removeWrapper
         />
@@ -62,8 +62,8 @@ export default function HistoryPage() {
           </ul>
         </div>
         <Image
-          alt="Imagen 3"
-          src="/image3.jpeg"
+          alt="Tglesia de los Jesuitas en Mendoza"
+          src="/iglesia.jpg"
           className="w-full"
           removeWrapper
           ref={section2Ref}
@@ -87,8 +87,8 @@ export default function HistoryPage() {
           </ul>
         </div>
         <Image
-          alt="Imagen 2"
-          src="/image2.jpg"
+          alt="Alumnos del Colegio San Luis Gonzaga - foto antigua"
+          src="/galeria/10.jpeg"
           className="w-full"
           removeWrapper
           ref={section3Ref}
