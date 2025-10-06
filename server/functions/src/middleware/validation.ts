@@ -4,7 +4,7 @@ import { hasRole } from "../utils/utils";
 
 export const validateRegistration = [
   body("phone")
-    .optional()
+    .optional({ checkFalsy: true })
     .matches(/^\+?[\d\s\-\(\)]+$/)
     .withMessage("Por favor proporciona un número de teléfono válido"),
 

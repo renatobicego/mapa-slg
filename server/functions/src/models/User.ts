@@ -46,7 +46,7 @@ const UserSchema = new Schema<IUserDocument>(
       type: [String],
       required: [true, "El rol es obligatorio"],
       enum: {
-        values: ["exstudent", "teacher", "employee", "student"],
+        values: ["exstudent", "teacher", "employee", "student", "familia"],
         message: "El rol debe ser alumno, profesor o profesional no docente",
       },
     },
@@ -146,8 +146,8 @@ UserSchema.pre("validate", function (next) {
   }
 
   if (
-    hasRole(this.role, "teacher") ||
-    (hasRole(this.role, "employee") && !this.workStartYear)
+    (hasRole(this.role, "teacher") || hasRole(this.role, "employee")) &&
+    !this.workStartYear
   ) {
     this.invalidate(
       "workStartYear",

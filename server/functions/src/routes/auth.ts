@@ -53,9 +53,10 @@ router.post(
       };
 
       // Add role-specific fields
-      if (hasRole(userData.role, "student")) {
+      if (hasRole(userData.role, "exstudent")) {
         userToCreate.graduationYear = userData.graduationYear;
-      } else if (
+      }
+      if (
         hasRole(userData.role, "teacher") ||
         hasRole(userData.role, "employee")
       ) {
