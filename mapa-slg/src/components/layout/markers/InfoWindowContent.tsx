@@ -1,13 +1,6 @@
 import React, { memo } from "react";
 import { IUserProfile } from "@/types/types";
-import {
-  Chip,
-  Image,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-} from "@heroui/react";
+import { Chip, Image, Modal, ModalBody, ModalContent } from "@heroui/react";
 import useMediaQuery from "@/hooks/useMediaQuery";
 
 type InfowindowContentProps = {
@@ -25,6 +18,8 @@ export const InfoWindowContent = memo(
     const { name, profileImage, description } = user || {};
     const screenSize = useMediaQuery();
     const modalSize = screenSize.width && screenSize.width < 768 ? "5xl" : "xl";
+    const maxWSize =
+      screenSize.width && screenSize.width < 768 ? "max-w-5xl" : "max-w-xl";
     const getRoleLabels = () => {
       if (!user || !Array.isArray(user.role)) {
         return [{ role: "community", label: "Miembro de la Comunidad" }];
@@ -91,6 +86,23 @@ export const InfoWindowContent = memo(
           return "text-black border-black/80";
       }
     };
+
+    const getColorDotByRole = (role: string) => {
+      switch (role) {
+        case "student":
+          return "bg-red/80";
+        case "exstudent":
+          return "bg-dark-blue/80";
+        case "teacher":
+          return "bg-light-blue/80";
+        case "employee":
+          return "bg-green/80";
+        case "familia":
+          return "bg-yellow/80";
+        default:
+          return "bg-black/80";
+      }
+    };
     return (
       <Modal
         size={modalSize}
@@ -102,30 +114,36 @@ export const InfoWindowContent = memo(
           closeButton:
             "z-50 bg-black text-white hover:bg-black/80 cursor-pointer",
         }}
+        scrollBehavior="inside"
       >
         <ModalContent className="p-0 ">
-          <ModalBody className="flex flex-col items-center p-0 relative ">
+          <ModalBody className="flex flex-col items-start p-0 relative ">
             <Image
               src={`${profileImage ? profileImage : "/default-avatar.webp"}`}
               alt={name}
               className="object-cover w-full mx-auto bg-white h-full max-h-[70vh] "
               removeWrapper
             />
+            <div className={`flex flex-col gap-2 px-4 py-2 w-full ${maxWSize}`}>
+              <h3 className="heading-4 sticky top-0 left-0">{name}</h3>
+              <div className="flex flex-wrap gap-2 mb-2 w-full">
+                {getRoleLabels().map((role, index) => (
+                  <Chip
+                    size="sm"
+                    variant="dot"
+                    className={`${getColorByRole(role.role)}`}
+                    classNames={{
+                      dot: `${getColorDotByRole(role.role)}`,
+                    }}
+                    key={index}
+                  >
+                    {role.label}
+                  </Chip>
+                ))}
+              </div>
+              <p className={`!text-small break-all`}>{description}</p>
+            </div>
           </ModalBody>
-          <ModalFooter className="flex-col max-h-[30dvh] overflow-y-auto">
-            <h3 className="heading-4 sticky top-0 left-0 mb-1">{name}</h3>
-            {getRoleLabels().map((role, index) => (
-              <Chip
-                size="sm"
-                variant="dot"
-                className={`${getColorByRole(role.role)}`}
-                key={index}
-              >
-                {role.label}
-              </Chip>
-            ))}
-            <p className="!text-small">{description}</p>
-          </ModalFooter>
         </ModalContent>
       </Modal>
     );

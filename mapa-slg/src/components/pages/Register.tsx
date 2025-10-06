@@ -36,7 +36,7 @@ const RegisterForm = () => {
     setError: setFormError,
   } = useForm<IUserRegistration>({
     defaultValues: {
-      role: undefined,
+      role: [],
       isCurrentlyWorking: false,
     },
   });
@@ -77,11 +77,21 @@ const RegisterForm = () => {
       );
       if (err instanceof AxiosError) {
         err.response?.data.errors?.forEach(
-          ({ path, msg }: { path: keyof IUserRegistration; msg: string }) => {
+          ({
+            path,
+            msg,
+            field,
+            message,
+          }: {
+            path: keyof IUserRegistration;
+            msg: string;
+            field: keyof IUserRegistration;
+            message: string;
+          }) => {
             console.log(path, msg);
-            setFormError(path as keyof IUserRegistration, {
+            setFormError((path ?? field) as keyof IUserRegistration, {
               type: "manual",
-              message: msg,
+              message: msg || message,
             });
           }
         );
@@ -104,9 +114,11 @@ const RegisterForm = () => {
           <Input
             id="phone"
             {...register("phone", {
-              pattern: {
-                value: /^\+?[0-9\s]+$/,
-                message: "Número de teléfono inválido",
+              validate: (value) => {
+                if (!value) return true;
+                return (
+                  /^\+?[0-9\s]+$/.test(value) || "Número de teléfono inválido"
+                );
               },
             })}
             label="Teléfono"
@@ -115,7 +127,7 @@ const RegisterForm = () => {
             description="Opcional, pero recomendado"
             pattern="^\+?[0-9\s]+$"
             errorMessage={errors.phone?.message}
-            isInvalid={errors.phone ? true : false}
+            isInvalid={!!errors.phone}
           />
 
           {/* Role Selection */}
@@ -128,9 +140,10 @@ const RegisterForm = () => {
               rules={{ required: "El rol es requerido" }}
               render={({ field }) => (
                 <Select
-                  {...field}
                   selectedKeys={new Set(field.value ?? [])}
-                  onSelectionChange={(keys) => field.onChange(Array.from(keys))}
+                  onSelectionChange={(keys) => {
+                    field.onChange(Array.from(keys));
+                  }}
                   label="¿Cuál es tu relación con la escuela?"
                   placeholder="Selecciona tu relación"
                   description="Puede ser relación actual o pasada"
@@ -140,49 +153,81 @@ const RegisterForm = () => {
                   errorMessage={errors.role?.message}
                   className="flex-1"
                   isInvalid={!!errors.role}
+                  disabledKeys={[
+                    field.value.includes("student") ? "exstudent" : "",
+                    field.value.includes("exstudent") ? "student" : "",
+                  ]}
                 >
                   <SelectItem key="student">Alumno</SelectItem>
                   <SelectItem key="exstudent">Ex-Alumno</SelectItem>
                   <SelectItem key="teacher">Profesor</SelectItem>
                   <SelectItem key="employee">Personal no docente</SelectItem>
+                  <SelectItem key="familia">Familia</SelectItem>
                 </Select>
               )}
             />
 
             {/* Conditional Fields Based on Role */}
-            {selectedRole.includes("exstudent") && (
-              <Input
-                id="graduationYear"
-                type="number"
-                {...register("graduationYear", {
-                  validate: (value) => {
-                    if (!selectedRole) return true;
-                    return selectedRole.includes("exstudent") && !value
-                      ? "El año de egreso es obligatorio para ex-alumnos"
-                      : true;
-                  },
-                  valueAsNumber: true,
-                  min: {
-                    value: 1900,
-                    message: "Ingrese un año válido",
-                  },
-                  max: {
-                    value: new Date().getFullYear(),
-                    message: "Ingrese un año válido",
-                  },
-                })}
-                placeholder="por ejemplo, 2025"
-                label="Año de egreso"
-                pattern="^[0-9]{4}$"
-                min={1900}
-                max={new Date().getFullYear()}
-                errorMessage={errors.graduationYear?.message}
-              />
+            {selectedRole?.includes("exstudent") && (
+              <>
+                <h4 className="text-lg font-medium">¿Cuándo egresaste?</h4>
+                <Input
+                  id="graduationYear"
+                  type="number"
+                  {...register("graduationYear", {
+                    validate: (value) => {
+                      if (!selectedRole) return true;
+                      return selectedRole.includes("exstudent") && !value
+                        ? "El año de egreso es obligatorio para ex-alumnos"
+                        : true;
+                    },
+                    valueAsNumber: true,
+                    min: {
+                      value: 1900,
+                      message: "Ingrese un año válido",
+                    },
+                    max: {
+                      value: new Date().getFullYear(),
+                      message: "Ingrese un año válido",
+                    },
+                  })}
+                  placeholder="por ejemplo, 2025"
+                  label="Año de egreso"
+                  pattern="^[0-9]{4}$"
+                  min={1900}
+                  max={new Date().getFullYear()}
+                  errorMessage={errors.graduationYear?.message}
+                />
+              </>
             )}
 
-            {(selectedRole.includes("teacher") ||
-              selectedRole.includes("employee")) && (
+            {(selectedRole?.includes("teacher") ||
+              selectedRole?.includes("employee")) && (
               <div className="flex flex-col gap-4 items-start w-full">
+                <h4 className="text-lg font-medium">
+                  Tu recorrido en la escuela como profesor o personal no docente
+                </h4>
+
+                <Input
+                  id="workStartYear"
+                  type="number"
+                  {...register("workStartYear", {
+                    min: {
+                      value: 1900,
+                      message: "Ingrese un año válido",
+                    },
+                    max: {
+                      value: new Date().getFullYear(),
+                      message: "Ingrese un año válido",
+                    },
+                    valueAsNumber: true,
+                  })}
+                  placeholder="por ejemplo, 2025"
+                  label="¿Desde qué año?"
+                  pattern="^[0-9]{4}$"
+                  errorMessage={errors.workStartYear?.message}
+                />
+
                 <Controller
                   name="isCurrentlyWorking"
                   control={control}
@@ -197,12 +242,20 @@ const RegisterForm = () => {
                     </Checkbox>
                   )}
                 />
-
-                <div className="grid grid-cols-1 gap-0 w-full">
+                {!isCurrentlyWorking && (
                   <Input
-                    id="workStartYear"
+                    id="workEndYear"
                     type="number"
-                    {...register("workStartYear", {
+                    {...register("workEndYear", {
+                      validate: (value) => {
+                        if (!workStartYear || !value) return true; // wait until start year is filled
+                        return (
+                          value >= workStartYear ||
+                          "Debe ser mayor o igual al año de inicio"
+                        );
+                      },
+
+                      valueAsNumber: true,
                       min: {
                         value: 1900,
                         message: "Ingrese un año válido",
@@ -211,48 +264,13 @@ const RegisterForm = () => {
                         value: new Date().getFullYear(),
                         message: "Ingrese un año válido",
                       },
-                      valueAsNumber: true,
                     })}
-                    showGrouped={!isCurrentlyWorking ? true : undefined}
-                    position="top"
                     placeholder="por ejemplo, 2025"
-                    label="¿Desde qué año?"
+                    label="¿Hasta qué año?"
                     pattern="^[0-9]{4}$"
-                    errorMessage={errors.workStartYear?.message}
+                    errorMessage={errors.workEndYear?.message}
                   />
-
-                  {!isCurrentlyWorking && (
-                    <Input
-                      id="workEndYear"
-                      type="number"
-                      {...register("workEndYear", {
-                        validate: (value) => {
-                          if (!workStartYear || !value) return true; // wait until start year is filled
-                          return (
-                            value >= workStartYear ||
-                            "Debe ser mayor o igual al año de inicio"
-                          );
-                        },
-
-                        valueAsNumber: true,
-                        min: {
-                          value: 1900,
-                          message: "Ingrese un año válido",
-                        },
-                        max: {
-                          value: new Date().getFullYear(),
-                          message: "Ingrese un año válido",
-                        },
-                      })}
-                      placeholder="por ejemplo, 2025"
-                      label="Hasta qué año?"
-                      showGrouped
-                      position="bottom"
-                      pattern="^[0-9]{4}$"
-                      errorMessage={errors.workEndYear?.message}
-                    />
-                  )}
-                </div>
+                )}
               </div>
             )}
           </div>
