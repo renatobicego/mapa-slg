@@ -134,6 +134,10 @@ const PeopleMap = () => {
     Point,
     GeoJsonProperties
   > | null>(null);
+  const [filteredUsers, setFilteredUsers] = useState<FeatureCollection<
+    Point,
+    GeoJsonProperties
+  > | null>(null);
   const mapRef = React.useRef<google.maps.Map | null>(null);
   const [shouldFetch, setShouldFetch] = useState(true);
   const [prevDataExists, setPrevDataExists] = useState(false);
@@ -187,7 +191,7 @@ const PeopleMap = () => {
       >
         {users && (
           <ClusteredMarkers
-            geojson={users}
+            geojson={filteredUsers ?? users}
             setInfowindowData={setInfowindowData}
             onOpen={onOpen}
             increaseMapZoom={increaseMapZoom}
@@ -201,7 +205,7 @@ const PeopleMap = () => {
         />
       </Map>
       <menu className="absolute bottom-5 right-5 lg:bottom-8 lg:right-8 flex gap-2 items-center">
-        <FilterButton />
+        <FilterButton users={users} setFilteredUsers={setFilteredUsers} />
         <AddMeMapModal
           button={<AddMeButton prevDataExists={prevDataExists} />}
           onPreviousData={setPrevDataExists}

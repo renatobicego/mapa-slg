@@ -234,8 +234,8 @@ const RegisterForm = () => {
                   render={({ field }) => (
                     <Checkbox
                       id="isCurrentlyWorking"
-                      checked={field.value}
-                      size="sm"
+                      isSelected={field.value}
+                      size="md"
                       onChange={field.onChange}
                     >
                       Estoy trabajando actualmente
@@ -254,7 +254,6 @@ const RegisterForm = () => {
                           "Debe ser mayor o igual al año de inicio"
                         );
                       },
-
                       valueAsNumber: true,
                       min: {
                         value: 1900,
