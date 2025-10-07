@@ -24,6 +24,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
   "https://mapaslg100.vercel.app",
+  "https://centenario.colegiosanluisgonzaga.edu.ar",
 ];
 
 app.use(
@@ -102,6 +103,6 @@ app.use("*", (_req, res) => {
 //   console.log(`🚀 Servidor ejecutándose en el puerto ${3001}`);
 //   console.log(`🏥 Verificación de salud: http://localhost:${3001}/health`);
 // });
+// export default app;
 
 export const api = functions.https.onRequest(app);
-// export default app;
