@@ -21,8 +21,8 @@ connectDatabase();
 app.use(helmet());
 app.use(clerkMiddleware());
 const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:5173",
+  // "http://localhost:3000",
+  // "http://localhost:5173",
   "https://mapaslg100.vercel.app",
   "https://centenario.colegiosanluisgonzaga.edu.ar",
 ];

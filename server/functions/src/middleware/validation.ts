@@ -14,7 +14,7 @@ export const validateRegistration = [
   body("graduationYear")
     .if(
       (value, { req }) =>
-        Array.isArray(req.body.role) && hasRole(req.body.role, "student")
+        Array.isArray(req.body.role) && hasRole(req.body.role, "exstudent")
     )
     .isInt({ min: 1900, max: new Date().getFullYear() + 10 })
     .withMessage("Ingrese un año válido"),
