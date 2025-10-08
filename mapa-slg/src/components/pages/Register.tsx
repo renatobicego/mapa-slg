@@ -154,7 +154,9 @@ const RegisterForm = () => {
                   className="flex-1"
                   isInvalid={!!errors.role}
                   disabledKeys={[
-                    field.value.includes("student") ? "exstudent" : "",
+                    ...(field.value.includes("student")
+                      ? ["exstudent", "teacher", "employee", "familia"]
+                      : [""]),
                     field.value.includes("exstudent") ? "student" : "",
                   ]}
                 >
