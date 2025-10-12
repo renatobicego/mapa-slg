@@ -7,6 +7,6 @@ interface HeroState {
 }
 
 export const useHeroStore = create<HeroState>((set) => ({
-  isVisible: true,
+  isVisible: sessionStorage?.getItem("heroSeen") !== "true",
   setIsVisible: (visible) => set({ isVisible: visible }),
 }));

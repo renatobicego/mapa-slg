@@ -13,5 +13,6 @@ export const siteConfig = {
     history: "/historia",
     help: "/participar",
     profile: "/perfil",
+    photos: "/fotos",
   },
 };

@@ -12,7 +12,7 @@ const HeroSection = () => {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="w-screen h-[100dvh] fixed top-0 left-0 flex flex-col items-start justify-end p-8 backdrop-blur-xs bg-black/25 z-100 pb-20 [@media(min-width:1320px)]:pl-container-xl"
+          className="w-screen h-[100dvh] fixed top-0 left-0 flex flex-col items-start justify-end p-8 backdrop-blur-xs bg-black/25 z-100 [@media(min-width:1320px)]:pl-container-xl"
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -28,9 +28,28 @@ const HeroSection = () => {
             a celebrar creando el Mapa del San Lucho. <br /> Agregá tu pin y
             formá parte de esta gran historia
           </h2>
-          <Button onPress={() => setIsVisible(false)} className="mt-6 shadow">
+          <Button
+            onPress={() => {
+              sessionStorage.setItem("heroSeen", "true");
+              setIsVisible(false);
+            }}
+            className="mt-6 shadow"
+          >
             Explorar Mapa
           </Button>
+          <p className="mt-20 text-white font-normal font-(family-name:--font-montserrat)">
+            <small>
+              Desarrollado por{" "}
+              <a
+                href="https://renatobicego.com"
+                target="_blank"
+                className="font-semibold"
+              >
+                Renato
+              </a>
+              , exalumno del Colegio.
+            </small>
+          </p>
         </motion.div>
       )}
     </AnimatePresence>

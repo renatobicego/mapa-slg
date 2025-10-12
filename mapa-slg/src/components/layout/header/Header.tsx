@@ -63,6 +63,7 @@ const Header = () => {
       loggedIn: true,
     },
     { label: "Nuestra Historia", href: siteConfig.pages.history },
+    { label: "Galería de Fotos", href: siteConfig.pages.photos },
     { label: "¿Cómo Participar?", modal: <HelpModal /> },
     { label: "Cerrar Sesión", signOut: true },
   ];
@@ -74,6 +75,7 @@ const Header = () => {
       loggedIn: true,
     },
     { label: "Nuestra Historia", href: siteConfig.pages.history },
+    { label: "Galería de Fotos", href: siteConfig.pages.photos },
     { label: "¿Cómo Participar?", modal: <HelpModal /> },
     {
       label: "Mi Perfil",
