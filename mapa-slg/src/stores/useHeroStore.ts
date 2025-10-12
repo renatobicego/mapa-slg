@@ -6,7 +6,12 @@ interface HeroState {
   setIsVisible: (visible: boolean) => void;
 }
 
+const initialVisible =
+  typeof window !== "undefined"
+    ? sessionStorage.getItem("heroSeen") !== "true"
+    : true;
+
 export const useHeroStore = create<HeroState>((set) => ({
-  isVisible: sessionStorage?.getItem("heroSeen") !== "true",
+  isVisible: initialVisible,
   setIsVisible: (visible) => set({ isVisible: visible }),
 }));
