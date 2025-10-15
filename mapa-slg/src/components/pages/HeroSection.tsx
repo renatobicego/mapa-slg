@@ -37,18 +37,16 @@ const HeroSection = () => {
           >
             Explorar Mapa
           </Button>
-          <p className="mt-20 text-white font-normal font-(family-name:--font-montserrat)">
-            <small>
-              Desarrollado por{" "}
-              <a
-                href="https://renatobicego.com"
-                target="_blank"
-                className="font-semibold"
-              >
-                Renato
-              </a>
-              , exalumno del Colegio.
-            </small>
+          <p className="mt-10 lg:mt-20 text-white font-normal font-(family-name:--font-montserrat) text-small">
+            Desarrollado por{" "}
+            <a
+              href="https://renatobicego.com"
+              target="_blank"
+              className="font-semibold"
+            >
+              Renato
+            </a>
+            , exalumno del Colegio.
           </p>
         </motion.div>
       )}
