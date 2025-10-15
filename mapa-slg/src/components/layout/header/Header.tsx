@@ -245,7 +245,7 @@ const Header = () => {
         motionProps={{
           initial: { height: "0dvh", opacity: 0, y: -20 },
           animate: {
-            height: isMenuOpen ? "90dvh" : "0dvh",
+            height: isMenuOpen ? "85dvh" : "0dvh",
             opacity: isMenuOpen ? 1 : 0,
             y: isMenuOpen ? 0 : -20,
           },
