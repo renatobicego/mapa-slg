@@ -5,7 +5,7 @@ export default async function Home() {
   return (
     <main className="-my-22 overflow-hidden">
       <HeroSection />
-      <section className="h-[95dvh] lg:h-[98dvh] w-screen px-2 rounded-xl relative">
+      <section className="h-[98dvh] w-screen px-2 rounded-xl relative">
         <PeopleMap />
       </section>
     </main>
