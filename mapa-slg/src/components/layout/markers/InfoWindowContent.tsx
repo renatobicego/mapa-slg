@@ -119,13 +119,16 @@ export const InfoWindowContent = memo(
         <ModalContent className="p-0 ">
           <ModalBody className="flex flex-col items-start p-0 relative ">
             <Image
-              src={`${profileImage ? profileImage : "/default-avatar.webp"}`}
+              src={profileImage ? profileImage : undefined}
               alt={name}
-              className="object-cover w-full mx-auto bg-white h-full max-h-[70vh] "
+              className={`${
+                !profileImage && "hidden"
+              } object-cover w-full mx-auto bg-white h-full max-h-[70vh]`}
               removeWrapper
             />
+
             <div className={`flex flex-col gap-2 px-4 py-2 w-full ${maxWSize}`}>
-              <h3 className="heading-4 sticky top-0 left-0">{name}</h3>
+              <h3 className="heading-3 sticky top-0 left-0">{name}</h3>
               <div className="flex flex-wrap gap-2 mb-2 w-full">
                 {getRoleLabels().map((role, index) => (
                   <Chip

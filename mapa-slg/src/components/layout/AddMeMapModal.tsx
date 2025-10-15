@@ -81,8 +81,12 @@ const AddMeMapModal = ({
       if (setShouldFetch) setShouldFetch(true);
 
       addToast({
-        title: "Te has registrado en el mapa",
-        description: "Ahora podrás ver tu ubicación en el mapa del San Lucho.",
+        title: prevDataExists
+          ? "Pin actualizado"
+          : "Te has registrado en el mapa",
+        description: prevDataExists
+          ? "Ahora podrás ver tu información actualizada"
+          : "Ahora podrás ver tu ubicación en el mapa del San Lucho.",
         color: "success",
       });
       reset();
@@ -228,12 +232,6 @@ const AddMeMapModal = ({
                   className="flex flex-col gap-4 flex-1"
                   onSubmit={handleSubmit(onSubmit)}
                 >
-                  <ImageDropzone
-                    setValue={setValue}
-                    errors={errors}
-                    control={control}
-                    defaultImage={getValues("defaultProfileImage")}
-                  />
                   <Textarea
                     label="Descripción"
                     placeholder="Escribe una breve descripción sobre ti"
@@ -245,6 +243,12 @@ const AddMeMapModal = ({
                     lang="es"
                     className="flex-1"
                     isInvalid={!!errors.description}
+                  />
+                  <ImageDropzone
+                    setValue={setValue}
+                    errors={errors}
+                    control={control}
+                    defaultImage={getValues("defaultProfileImage")}
                   />
                 </Form>
               )}

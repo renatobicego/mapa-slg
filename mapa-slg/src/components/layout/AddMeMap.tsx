@@ -193,7 +193,7 @@ const AddMeMap = ({
         map={map}
         className="absolute top-0 left-0 z-10 w-auto  bg-white m-2 p-3 rounded-2xl"
       />
-      <div ref={ref} className="h-[60vh] w-full rounded-2xl" />
+      <div ref={ref} className="h-[80dvh] md:h-[60vh] w-full rounded-2xl" />
 
       {/* Floating button for geolocation */}
       <button
